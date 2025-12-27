@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>@ViewData["Title"] - MTG Card Generator</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #4a1942 100%);
+            background-attachment: fixed;
+            min-height: 100%;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+        }
+        
+        .navbar {
+            background: rgba(0, 0, 0, 0.8) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #D4AF37 !important;
+        }
+        
+        .navbar-brand {
+            color: #D4AF37 !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: #ccc !important;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: #D4AF37 !important;
+        }
+        
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid #D4AF37 !important;
+            color: #888;
+        }
+        
+        footer a {
+            color: #D4AF37;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Generator" asp-action="Index">
+                ⚔️ MTG Card Generator
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Generator" asp-action="Index">Generator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Cards" asp-action="Index">Browse Cards</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Data" asp-action="Index">Import Data</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="content-wrapper">
+    <div class="container">
+        <main role="main" class="pb-5">
+            @RenderBody()
+        </main>
+    </div>
+</div>
+
+<footer class="py-4">
+    <div class="container text-center">
+        &copy; 2025 MTG Card Generator - Powered by AI
+    </div>
+</footer>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Import danych";
+}
+
+<h1>Import kart z Scryfall</h1>
+
+@if (ViewBag.HasData)
+{
+    <div class="alert alert-success">
+        W bazie jest już <strong>@ViewBag.CardCount</strong> kart.
+        <a href="/Cards">Zobacz karty</a>
+    </div>
+}
+else if (ViewBag.BulkInfo != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h5>Oracle Cards</h5>
+            <p>Rozmiar: ~@(ViewBag.BulkInfo.Size / 1024 / 1024) MB</p>
+            <p>Aktualizacja: @ViewBag.BulkInfo.UpdatedAt.ToString("yyyy-MM-dd")</p>
+            
+            <button id="importBtn" class="btn btn-primary">Importuj karty</button>
+            <div id="status" class="mt-3"></div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('importBtn')?.addEventListener('click', async function() {
+            this.disabled = true;
+            document.getElementById('status').innerHTML = '<div class="alert alert-info">Importowanie... (może potrwać kilka minut)</div>';
+            
+            const response = await fetch('/Data/Import', { method: 'POST' });
+            const data = await response.json();
+            
+            document.getElementById('status').innerHTML = `<div class="alert alert-success">Zaimportowano ${data.imported} kart! <a href="/Cards">Zobacz</a></div>`;
+        });
+    </script>
+}

@@ -1,0 +1,237 @@
+﻿@{
+ViewData["Title"] = "Card Generator";
+}
+
+<style>
+    .hero-section {
+        text-align: center;
+        padding: 2rem 0 3rem;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        color: #aaa;
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .generate-btn {
+        background: linear-gradient(135deg, #D4AF37, #B8960C);
+        border: none;
+        color: #000;
+        font-weight: bold;
+        font-size: 1.3rem;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+    }
+
+    .generate-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
+        background: linear-gradient(135deg, #F4CF47, #D4AF37);
+        color: #000;
+    }
+
+    .generate-btn:disabled {
+        background: #555;
+        box-shadow: none;
+        transform: none;
+        color: #999;
+    }
+
+    .card-display {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 400px;
+        margin-top: 2rem;
+    }
+
+    .card-image {
+        max-width: 100%;
+        width: 400px;
+        border-radius: 18px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+        transition: transform 0.3s ease;
+    }
+
+    .card-image:hover {
+        transform: scale(1.02) rotateY(5deg);
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 3rem;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(212, 175, 55, 0.2);
+        border-top-color: #D4AF37;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+        color: #D4AF37;
+        font-size: 1.2rem;
+    }
+
+    .error-box {
+        background: rgba(220, 53, 69, 0.2);
+        border: 1px solid #dc3545;
+        border-radius: 10px;
+        padding: 1.5rem;
+        max-width: 500px;
+        margin: 2rem auto;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 4rem;
+        padding-top: 3rem;
+        border-top: 1px solid rgba(212, 175, 55, 0.2);
+    }
+
+    .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(212, 175, 55, 0.5);
+        transform: translateY(-5px);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-title {
+        color: #D4AF37;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+        color: #888;
+        font-size: 0.95rem;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+
+        .card-image {
+            width: 300px;
+        }
+
+        .generate-btn {
+            padding: 0.8rem 2rem;
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="hero-section">
+    <h1 class="hero-title">✨ AI Card Generator</h1>
+    <p class="hero-subtitle">Create unique Magic: The Gathering cards powered by artificial intelligence</p>
+
+    <button id="generateBtn" class="btn generate-btn">
+        🎴 Generate Random Card
+    </button>
+</div>
+
+<div id="loading" class="loading-container" style="display: none;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text">Conjuring your card(This may take a while...)</div>
+</div>
+
+<div id="error" class="error-box" style="display: none;"></div>
+
+<div id="result" class="card-display" style="display: none;">
+    <img id="cardImage" class="card-image" alt="Generated MTG Card" />
+</div>
+
+<div class="features">
+    <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-title">AI-Powered</div>
+        <div class="feature-desc">Cards generated using advanced language models trained on real MTG data</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">🎨</div>
+        <div class="feature-title">Unique Art</div>
+        <div class="feature-desc">Each card features AI-generated artwork matching the card's theme</div>
+    </div>
+    <div class="feature-card">
+        <div class="feature-icon">⚖️</div>
+        <div class="feature-title">Balanced Design</div>
+        <div class="feature-desc">Cards are based on patterns from 30,000+ real MTG cards</div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('generateBtn').addEventListener('click', async function() {
+        const btn = this;
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const error = document.getElementById('error');
+
+        btn.disabled = true;
+        btn.innerHTML = '⏳ Generating...';
+        loading.style.display = 'flex';
+        result.style.display = 'none';
+        error.style.display = 'none';
+
+        try {
+            const response = await fetch('/Generator/GenerateImage', { method: 'POST' });
+
+            if (!response.ok) throw new Error('Failed to generate card. Please try again.');
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+
+            document.getElementById('cardImage').src = url;
+            result.style.display = 'flex';
+        } catch (e) {
+            error.innerHTML = '❌ ' + e.message;
+            error.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '🎴 Generate Random Card';
+            loading.style.display = 'none';
+        }
+    });
+</script>
+}
