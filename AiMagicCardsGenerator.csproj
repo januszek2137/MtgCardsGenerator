@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>aspnet-AiMagicCardsGenerator-13da431a-b38a-4292-9a12-c2651d2bb8a2</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DefaultItemExcludes>$(DefaultItemExcludes);AiMagicCardsGenerator.Tests/**</DefaultItemExcludes>
     </PropertyGroup>
 
     <ItemGroup>
