@@ -1,32 +1,89 @@
-﻿using AiMagicCardsGenerator.Services;
+﻿using AiMagicCardsGenerator.Models.Entities;
+using AiMagicCardsGenerator.Repositories;
+using AiMagicCardsGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace AiMagicCardsGenerator.Controllers;
 
 public class GeneratorController : Controller {
-    private readonly IGeneratorService  _generatorService;
+    private readonly IGeneratorService _generatorService;
     private readonly ICardRenderService _cardRenderService;
+    private readonly IGeneratedCardRepository _generatedCardRepository;
 
-    public GeneratorController(IGeneratorService generatorService, ICardRenderService cardRenderService) {
+    public GeneratorController(
+        IGeneratorService generatorService,
+        ICardRenderService cardRenderService,
+        IGeneratedCardRepository generatedCardRepository)
+    {
         _generatorService = generatorService;
         _cardRenderService = cardRenderService;
+        _generatedCardRepository = generatedCardRepository;
     }
 
-    public IActionResult Index() {
+    public IActionResult Index()
+    {
         return View();
     }
 
     [HttpPost]
-    public async Task<IActionResult> Generate() {
-        var result = await _generatorService.GenerateRandomCardAsync();
-        return Json(result);
-    }
-    
-    [HttpPost]
-    public async Task<IActionResult> GenerateImage()
+    [EnableRateLimiting("GeneratorLimit")]
+    public async Task<IActionResult> Generate()
     {
-        var result     = await _generatorService.GenerateRandomCardAsync();
+        var result = await _generatorService.GenerateRandomCardAsync();
         var imageBytes = await _cardRenderService.RenderCardAsync(result.Card);
-        return File(imageBytes, "image/png");
+
+        var generatedCard = new GeneratedCard
+        {
+            Name = result.Card.Name,
+            ManaCost = result.Card.ManaCost,
+            Cmc = result.Card.Cmc,
+            TypeLine = result.Card.TypeLine,
+            OracleText = result.Card.OracleText,
+            Power = result.Card.Power,
+            Toughness = result.Card.Toughness,
+            Colors = result.Card.Colors,
+            FlavorText = result.Card.FlavorText,
+            ImageData = imageBytes,
+            CreatorIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"
+        };
+
+        await _generatedCardRepository.AddAsync(generatedCard);
+
+        return RedirectToAction("Result", new { id = generatedCard.Id });
+    }
+
+    public async Task<IActionResult> Result(int id)
+    {
+        var card = await _generatedCardRepository.GetByIdAsync(id);
+        if (card == null)
+            return RedirectToAction("Index");
+
+        return View(card);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Share(int id)
+    {
+        await _generatedCardRepository.ShareAsync(id);
+        return RedirectToAction("Index", "Home");
+    }
+
+    public async Task<IActionResult> Image(int id)
+    {
+        var card = await _generatedCardRepository.GetByIdAsync(id);
+        if (card?.ImageData == null)
+            return NotFound();
+
+        return File(card.ImageData, "image/png");
+    }
+
+    public async Task<IActionResult> Download(int id)
+    {
+        var card = await _generatedCardRepository.GetByIdAsync(id);
+        if (card?.ImageData == null)
+            return NotFound();
+
+        return File(card.ImageData, "image/png", $"{card.Name}.png");
     }
 }

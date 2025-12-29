@@ -81,6 +81,64 @@ namespace AiMagicCardsGenerator.Data.Migrations
                     b.ToTable("Cards");
                 });
 
+            modelBuilder.Entity("AiMagicCardsGenerator.Models.Entities.GeneratedCard", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cmc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Colors")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CreatorIp")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FlavorText")
+                        .HasColumnType("TEXT");
+
+                    b.Property<byte[]>("ImageData")
+                        .IsRequired()
+                        .HasColumnType("BLOB");
+
+                    b.Property<bool>("IsShared")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Likes")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ManaCost")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OracleText")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Power")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Toughness")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TypeLine")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GeneratedCards");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")

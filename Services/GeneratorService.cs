@@ -19,7 +19,7 @@ public class GeneratorService : IGeneratorService {
     public async Task<CardGenerationResult> GenerateRandomCardAsync()
     {
         var random    = new Random();
-        var targetCmc = random.Next(1, 8); // Losowy koszt 1-7
+        var targetCmc = random.Next(1, 8);
     
         var examples = await _cardRepository.GetRandomByCmcAsync(targetCmc, 5);
         var prompt   = BuildPrompt(examples, targetCmc);

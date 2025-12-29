@@ -4,6 +4,7 @@ using AiMagicCardsGenerator.Data;
 using AiMagicCardsGenerator.Models;
 using AiMagicCardsGenerator.Repositories;
 using AiMagicCardsGenerator.Services;
+using AiMagicCardsGenerator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +23,16 @@ builder.Services.AddHttpClient<IScryfallService, ScryfallService>(client => {
 });
 builder.Services.AddHttpClient<IGeneratorService, GeneratorService>();
 builder.Services.AddScoped<ICardRenderService, CardRenderService>();
-builder.Services.AddHttpClient<IImageGeneratorService, ImageGeneratorService>();
+builder.Services.AddScoped<IGeneratedCardRepository, GeneratedCardRepository>();
+builder.Services.AddHttpClient<IImageGeneratorService, ImageGeneratorService>(client => {
+    client.Timeout = TimeSpan.FromSeconds(60); // 60 seconds for image generation
+});
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddRateLimiter();
 
 var app = builder.Build();
 
@@ -40,6 +46,7 @@ else {
     app.UseHsts();
 }
 
+app.UseRateLimiter();
 app.UseHttpsRedirection();
 app.UseRouting();
 

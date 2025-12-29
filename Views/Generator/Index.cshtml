@@ -1,11 +1,11 @@
 ﻿@{
-ViewData["Title"] = "Card Generator";
+    ViewData["Title"] = "Card Generator";
 }
 
 <style>
     .hero-section {
         text-align: center;
-        padding: 2rem 0 3rem;
+        padding: 4rem 0;
     }
 
     .hero-title {
@@ -19,7 +19,7 @@ ViewData["Title"] = "Card Generator";
     }
 
     .hero-subtitle {
-        color: #aaa;
+        color: #888;
         font-size: 1.2rem;
         margin-bottom: 2rem;
     }
@@ -32,6 +32,7 @@ ViewData["Title"] = "Card Generator";
         font-size: 1.3rem;
         padding: 1rem 3rem;
         border-radius: 50px;
+        cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
     }
@@ -40,69 +41,112 @@ ViewData["Title"] = "Card Generator";
         transform: translateY(-3px);
         box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
         background: linear-gradient(135deg, #F4CF47, #D4AF37);
-        color: #000;
     }
 
     .generate-btn:disabled {
-        background: #555;
-        box-shadow: none;
+        opacity: 0.7;
+        cursor: not-allowed;
         transform: none;
-        color: #999;
     }
 
-    .card-display {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 400px;
-        margin-top: 2rem;
+    /* Progress Bar Styles */
+    .progress-container {
+        display: none;
+        max-width: 500px;
+        margin: 2rem auto 0;
+        text-align: center;
     }
 
-    .card-image {
-        max-width: 100%;
-        width: 400px;
-        border-radius: 18px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
-        transition: transform 0.3s ease;
+    .progress-container.active {
+        display: block;
     }
 
-    .card-image:hover {
-        transform: scale(1.02) rotateY(5deg);
+    .progress-bar-wrapper {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 50px;
+        height: 24px;
+        overflow: hidden;
+        position: relative;
     }
 
-    .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        padding: 3rem;
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
+        background-size: 200% 100%;
+        animation: shimmer 2s linear infinite;
+        border-radius: 50px;
+        transition: width 0.5s ease;
+        width: 0%;
     }
 
-    .loading-spinner {
-        width: 60px;
-        height: 60px;
-        border: 4px solid rgba(212, 175, 55, 0.2);
+    @@keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .progress-status {
+        margin-top: 1rem;
+        color: #D4AF37;
+        font-size: 1rem;
+        font-weight: 500;
+        min-height: 1.5rem;
+    }
+
+    .progress-status .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(212, 175, 55, 0.3);
         border-top-color: #D4AF37;
         border-radius: 50%;
         animation: spin 1s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
     }
 
     @@keyframes spin {
         to { transform: rotate(360deg); }
     }
 
-    .loading-text {
-        color: #D4AF37;
-        font-size: 1.2rem;
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 1.5rem;
+        padding: 0 0.5rem;
     }
 
-    .error-box {
-        background: rgba(220, 53, 69, 0.2);
-        border: 1px solid #dc3545;
-        border-radius: 10px;
-        padding: 1.5rem;
-        max-width: 500px;
-        margin: 2rem auto;
+    .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        opacity: 0.4;
+        transition: opacity 0.3s ease;
+    }
+
+    .progress-step.active,
+    .progress-step.completed {
+        opacity: 1;
+    }
+
+    .step-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .step-label {
+        font-size: 0.75rem;
+        color: #888;
+    }
+
+    .progress-step.active .step-label {
+        color: #D4AF37;
+    }
+
+    .progress-step.completed .step-icon::after {
+        content: " ✓";
+        color: #4CAF50;
+        font-size: 0.8rem;
     }
 
     .features {
@@ -145,41 +189,43 @@ ViewData["Title"] = "Card Generator";
         color: #888;
         font-size: 0.95rem;
     }
-
-    @@media (max-width: 768px) {
-        .hero-title {
-            font-size: 2rem;
-        }
-
-        .card-image {
-            width: 300px;
-        }
-
-        .generate-btn {
-            padding: 0.8rem 2rem;
-            font-size: 1.1rem;
-        }
-    }
 </style>
 
 <div class="hero-section">
     <h1 class="hero-title">✨ AI Card Generator</h1>
     <p class="hero-subtitle">Create unique Magic: The Gathering cards powered by artificial intelligence</p>
 
-    <button id="generateBtn" class="btn generate-btn">
-        🎴 Generate Random Card
-    </button>
-</div>
+    <form asp-action="Generate" method="post" id="generateForm">
+        <button type="submit" class="generate-btn" id="generateBtn">🎴 Generate Random Card</button>
+    </form>
 
-<div id="loading" class="loading-container" style="display: none;">
-    <div class="loading-spinner"></div>
-    <div class="loading-text">Conjuring your card(This may take a while...)</div>
-</div>
-
-<div id="error" class="error-box" style="display: none;"></div>
-
-<div id="result" class="card-display" style="display: none;">
-    <img id="cardImage" class="card-image" alt="Generated MTG Card" />
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar-wrapper">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-status" id="progressStatus">
+            <span class="spinner"></span>
+            <span id="statusText">Initializing...</span>
+        </div>
+        <div class="progress-steps">
+            <div class="progress-step" id="step1">
+                <span class="step-icon">🎲</span>
+                <span class="step-label">Finding cards</span>
+            </div>
+            <div class="progress-step" id="step2">
+                <span class="step-icon">🤖</span>
+                <span class="step-label">AI generation</span>
+            </div>
+            <div class="progress-step" id="step3">
+                <span class="step-icon">🎨</span>
+                <span class="step-label">Creating art</span>
+            </div>
+            <div class="progress-step" id="step4">
+                <span class="step-icon">🖼️</span>
+                <span class="step-label">Rendering</span>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="features">
@@ -201,37 +247,105 @@ ViewData["Title"] = "Card Generator";
 </div>
 
 @section Scripts {
-<script>
-    document.getElementById('generateBtn').addEventListener('click', async function() {
-        const btn = this;
-        const loading = document.getElementById('loading');
-        const result = document.getElementById('result');
-        const error = document.getElementById('error');
+    <script>
+        const form = document.getElementById('generateForm');
+        const btn = document.getElementById('generateBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const statusText = document.getElementById('statusText');
 
-        btn.disabled = true;
-        btn.innerHTML = '⏳ Generating...';
-        loading.style.display = 'flex';
-        result.style.display = 'none';
-        error.style.display = 'none';
+        const stepMessages = {
+            step1: [
+                'Finding similar cards in database...',
+                'Searching through 30,000+ cards...',
+                'Analyzing mana curves...',
+                'Consulting the ancient archives...',
+                'Rolling for card type...',
+                'Shuffling the multiverse...',
+                'Querying the Blind Eternities...'
+            ],
+            step2: [
+                'AI is generating your card...',
+                'Channeling creative mana...',
+                'Neural networks are thinking...',
+                'Crafting card mechanics...',
+                'Balancing power and toughness...',
+                'Writing flavor text...',
+                'Consulting the Planeswalker council...',
+                'Brewing something unique...',
+                'Invoking machine learning spirits...'
+            ],
+            step3: [
+                'Creating unique artwork...',
+                'Painting with digital brushes...',
+                'Summoning artistic vision...',
+                'Rendering magical landscapes...',
+                'AI artist is at work...',
+                'Capturing the card\'s essence...',
+                'Mixing colors from the Æther...',
+                'Illustrating your creation...',
+                'Conjuring visual magic...'
+            ],
+            step4: [
+                'Rendering final card...',
+                'Applying card frame...',
+                'Adding finishing touches...',
+                'Polishing the borders...',
+                'Enchanting the final result...',
+                'Assembling card components...',
+                'Almost ready to cast...',
+                'Preparing for reveal...'
+            ]
+        };
 
-        try {
-            const response = await fetch('/Generator/GenerateImage', { method: 'POST' });
-
-            if (!response.ok) throw new Error('Failed to generate card. Please try again.');
-
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-
-            document.getElementById('cardImage').src = url;
-            result.style.display = 'flex';
-        } catch (e) {
-            error.innerHTML = '❌ ' + e.message;
-            error.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.innerHTML = '🎴 Generate Random Card';
-            loading.style.display = 'none';
+        function getRandomMessage(stepId) {
+            const messages = stepMessages[stepId];
+            return messages[Math.floor(Math.random() * messages.length)];
         }
-    });
-</script>
+
+        const steps = [
+            { id: 'step1', progress: 15 },
+            { id: 'step2', progress: 40 },
+            { id: 'step3', progress: 70 },
+            { id: 'step4', progress: 90 }
+        ];
+
+        form.addEventListener('submit', function(e) {
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Generating...';
+            progressContainer.classList.add('active');
+
+            let currentStep = 0;
+
+            function advanceStep() {
+                if (currentStep > 0) {
+                    document.getElementById(steps[currentStep - 1].id).classList.remove('active');
+                    document.getElementById(steps[currentStep - 1].id).classList.add('completed');
+                }
+
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    document.getElementById(step.id).classList.add('active');
+                    progressBar.style.width = step.progress + '%';
+                    statusText.textContent = getRandomMessage(step.id);
+                    currentStep++;
+
+                    const delay = 2000 + Math.random() * 3000;
+                    setTimeout(advanceStep, delay);
+                } else {
+                    progressBar.style.width = '100%';
+                    const finalMessages = [
+                        'Almost there...',
+                        'Finalizing your card...',
+                        'Just a moment more...',
+                        'Preparing the grand reveal...',
+                        'Your card is almost ready...'
+                    ];
+                    statusText.textContent = finalMessages[Math.floor(Math.random() * finalMessages.length)];
+                }
+            }
+
+            advanceStep();
+        });
+    </script>
 }
