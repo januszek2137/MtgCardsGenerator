@@ -6,7 +6,8 @@ namespace AiMagicCardsGenerator.Data;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
 {
-    public DbSet<Card> Cards => Set<Card>();
+    public DbSet<Card>          Cards          => Set<Card>();
+    public DbSet<GeneratedCard> GeneratedCards => Set<GeneratedCard>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

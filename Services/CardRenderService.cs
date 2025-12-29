@@ -5,20 +5,23 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.Fonts;
 using AiMagicCardsGenerator.Models.Entities;
 using SixLabors.ImageSharp.PixelFormats;
+using Microsoft.Extensions.Logging;
 using static AiMagicCardsGenerator.Services.CardRenderConfig;
 namespace AiMagicCardsGenerator.Services;
 
 public class CardRenderService : ICardRenderService {
     private readonly IWebHostEnvironment    _environment;
     private readonly IImageGeneratorService _imageGenerator;
+    private readonly ILogger<CardRenderService> _logger;
     private readonly FontFamily             _nameFont;
     private readonly FontFamily             _typeFont;
     private readonly FontFamily             _textFont;
     private readonly FontFamily             _flavorFont;
 
-    public CardRenderService(IWebHostEnvironment environment, IImageGeneratorService imageGenerator) {
+    public CardRenderService(IWebHostEnvironment environment, IImageGeneratorService imageGenerator, ILogger<CardRenderService> logger) {
         _environment    = environment;
         _imageGenerator = imageGenerator;
+        _logger         = logger;
 
         var fontsPath = Path.Combine(_environment.WebRootPath, "assets", "fonts");
 
@@ -41,14 +44,20 @@ public class CardRenderService : ICardRenderService {
         using var image = new Image<Rgba32>(frame.Width, frame.Height);
 
         try {
-            var       artBytes = await _imageGenerator.GenerateCardArtAsync(card.Name, card.TypeLine, card.OracleText);
+            _logger.LogInformation("Attempting to generate artwork for card: {CardName}", card.Name);
+            var artBytes = await _imageGenerator.GenerateCardArtAsync(card.Name, card.TypeLine, card.OracleText);
+            _logger.LogInformation("Successfully generated artwork, received {ByteCount} bytes", artBytes.Length);
+
             using var artImage = Image.Load<Rgba32>(artBytes);
+            _logger.LogInformation("Successfully loaded artwork image");
 
             artImage.Mutate(ctx => ctx.Resize(ART_WIDTH, ART_HEIGHT));
             image.Mutate(ctx => ctx.DrawImage(artImage, new Point(ART_X, ART_Y), 1f));
+            _logger.LogInformation("Successfully rendered artwork on card");
         }
-        catch {
-            // Skip art if generation fails
+        catch (Exception ex) {
+            _logger.LogError(ex, "Failed to generate or render artwork for card: {CardName}. Type: {TypeLine}",
+                card.Name, card.TypeLine);
         }
 
         image.Mutate(ctx => ctx.DrawImage(frame, new Point(0, 0), 1f));

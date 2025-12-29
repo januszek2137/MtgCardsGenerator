@@ -4,7 +4,7 @@ using AiMagicCardsGenerator.Repositories;
 
 namespace AiMagicCardsGenerator.Services;
 
-public class CardService:ICardService {
+public class CardService : ICardService {
     private readonly ICardRepository  _cardRepository;
     private readonly IScryfallService _scryfallService;
 
@@ -17,24 +17,24 @@ public class CardService:ICardService {
         var scryfallCards = await _scryfallService.DownloadAllCardsAsync();
 
         var validCards = scryfallCards
-                        .Where(c => c.Layout is not ("token" or "emblem" or "art_series"))
-                        .Where(c => !string.IsNullOrEmpty(c.OracleText) || c.TypeLine.Contains("Land"))
-                        .ToList();
+            .Where(c => c.Layout is not ("token" or "emblem" or "art_series"))
+            .Where(c => !string.IsNullOrEmpty(c.OracleText) || c.TypeLine.Contains("Land"))
+            .ToList();
 
         var entities = validCards.Select(sc => new Card {
-                                                            ScryfallId = sc.Id,
-                                                            Name       = sc.Name,
-                                                            ManaCost   = sc.ManaCost,
-                                                            Cmc        = sc.Cmc,
-                                                            TypeLine   = sc.TypeLine,
-                                                            OracleText = sc.OracleText,
-                                                            Power      = sc.Power,
-                                                            Toughness  = sc.Toughness,
-                                                            Rarity     = sc.Rarity,
-                                                            FlavorText = sc.FlavorText,
-                                                            Colors     = JsonSerializer.Serialize(sc.Colors),
-                                                            Keywords   = JsonSerializer.Serialize(sc.Keywords)
-                                                        }).ToList();
+            ScryfallId = sc.Id,
+            Name       = sc.Name,
+            ManaCost   = sc.ManaCost,
+            Cmc        = sc.Cmc,
+            TypeLine   = sc.TypeLine,
+            OracleText = sc.OracleText,
+            Power      = sc.Power,
+            Toughness  = sc.Toughness,
+            Rarity     = sc.Rarity,
+            FlavorText = sc.FlavorText,
+            Colors     = JsonSerializer.Serialize(sc.Colors),
+            Keywords   = JsonSerializer.Serialize(sc.Keywords)
+        }).ToList();
 
         await _cardRepository.AddRangeAsync(entities);
         await _cardRepository.SaveChangesAsync();

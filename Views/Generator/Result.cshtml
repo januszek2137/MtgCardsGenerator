@@ -1,0 +1,112 @@
+﻿@model AiMagicCardsGenerator.Models.Entities.GeneratedCard
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<style>
+    .result-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 0;
+    }
+
+    .card-title {
+        font-size: 2rem;
+        color: #D4AF37;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .card-image {
+        max-width: 400px;
+        width: 100%;
+        border-radius: 18px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .btn-action {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-share {
+        background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        color: #fff;
+    }
+
+    .btn-share:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        color: #fff;
+    }
+
+    .btn-download {
+        background: linear-gradient(135deg, #2196F3, #1565C0);
+        color: #fff;
+    }
+
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+        color: #fff;
+    }
+
+    .btn-generate {
+        background: linear-gradient(135deg, #D4AF37, #B8960C);
+        color: #000;
+    }
+
+    .btn-generate:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        color: #000;
+    }
+
+    .shared-badge {
+        background: #4CAF50;
+        color: #fff;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+    }
+</style>
+
+<div class="result-container">
+    <h1 class="card-title">✨ @Model.Name</h1>
+
+    <img src="@Url.Action("Image", new { id = Model.Id })" alt="@Model.Name" class="card-image" />
+
+    @if (Model.IsShared)
+    {
+        <div class="shared-badge">✅ Shared to Gallery</div>
+    }
+
+    <div class="card-actions">
+        @if (!Model.IsShared)
+        {
+            <form asp-action="Share" method="post" style="display: inline;">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn-action btn-share">📤 Share to Gallery</button>
+            </form>
+        }
+
+        <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
+        <a href="@Url.Action("Index")" class="btn-action btn-generate">🎴 Generate Another</a>
+    </div>
+</div>
