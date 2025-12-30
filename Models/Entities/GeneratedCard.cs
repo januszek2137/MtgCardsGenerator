@@ -13,7 +13,10 @@ public class GeneratedCard {
     public string?  FlavorText { get; set; }
     public byte[]   ImageData  { get; set; } = [];
     public DateTime CreatedAt  { get; set; } = DateTime.UtcNow;
+    public string?  CreatedBy  { get; set; }
     public string   CreatorIp  { get; set; } = "";
     public bool     IsShared   { get; set; } = false;
     public int      Likes      { get; set; } = 0;
+
+    public ICollection<CardLike> CardLikes { get; set; } = new List<CardLike>();
 }

@@ -8,6 +8,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Card>          Cards          => Set<Card>();
     public DbSet<GeneratedCard> GeneratedCards => Set<GeneratedCard>();
+    public DbSet<CardLike>      CardLikes      => Set<CardLike>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -20,5 +21,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             e.HasIndex(c => c.TypeLine);
             e.HasIndex(c => c.Colors);
         });
+        
+        modelBuilder.Entity<CardLike>()
+            .HasIndex(e => new { e.GeneratedCardId, e.UserId })
+            .IsUnique();
     }
 }

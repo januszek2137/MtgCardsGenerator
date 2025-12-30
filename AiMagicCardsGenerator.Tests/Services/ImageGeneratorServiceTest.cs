@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using AiMagicCardsGenerator.Services;
 using JetBrains.Annotations;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Moq.Protected;
@@ -14,15 +17,23 @@ namespace AiMagicCardsGenerator.Tests.Services;
 [TestClass]
 [TestSubject(typeof(ImageGeneratorService))]
 public class ImageGeneratorServiceTest {
-    private Mock<HttpMessageHandler> _mockHttpHandler = null!;
-    private HttpClient               _httpClient      = null!;
-    private ImageGeneratorService    _service         = null!;
+    private Mock<HttpMessageHandler>                _mockHttpHandler = null!;
+    private HttpClient                              _httpClient      = null!;
+    private Mock<ILogger<ImageGeneratorService>>    _mockLogger      = null!;
+    private Mock<IConfiguration>                    _mockConfig      = null!;
+    private ImageGeneratorService                   _service         = null!;
 
     [TestInitialize]
     public void Setup() {
         _mockHttpHandler = new Mock<HttpMessageHandler>();
         _httpClient      = new HttpClient(_mockHttpHandler.Object);
-        _service         = new ImageGeneratorService(_httpClient);
+        _mockLogger      = new Mock<ILogger<ImageGeneratorService>>();
+        _mockConfig      = new Mock<IConfiguration>();
+
+        // Setup configuration to return a test API key
+        _mockConfig.Setup(c => c["HuggingFace:ApiKey"]).Returns("test-api-key");
+
+        _service = new ImageGeneratorService(_httpClient, _mockLogger.Object, _mockConfig.Object);
     }
 
     #region GenerateCardArtAsync
@@ -53,11 +64,12 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        Assert.StartsWith("https://image.pollinations.ai/prompt/", capturedRequest.RequestUri!.ToString());
+        Assert.AreEqual("https://router.huggingface.co/hf-inference/models/stabilityai/stable-diffusion-xl-base-1.0",
+            capturedRequest.RequestUri!.ToString());
     }
 
     [TestMethod]
-    public async Task GenerateCardArtAsync_IncludesWidthParameter() {
+    public async Task GenerateCardArtAsync_UsesPostMethod() {
         // Arrange
         HttpRequestMessage? capturedRequest = null;
         SetupHttpResponseWithCapture(new byte[] { 1, 2, 3 }, req => capturedRequest = req);
@@ -67,11 +79,11 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        Assert.Contains("width=3000", capturedRequest.RequestUri!.ToString());
+        Assert.AreEqual(HttpMethod.Post, capturedRequest.Method);
     }
 
     [TestMethod]
-    public async Task GenerateCardArtAsync_IncludesHeightParameter() {
+    public async Task GenerateCardArtAsync_IncludesBearerToken() {
         // Arrange
         HttpRequestMessage? capturedRequest = null;
         SetupHttpResponseWithCapture(new byte[] { 1, 2, 3 }, req => capturedRequest = req);
@@ -81,11 +93,13 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        Assert.Contains("height=2400", capturedRequest.RequestUri!.ToString());
+        Assert.IsNotNull(capturedRequest.Headers.Authorization);
+        Assert.AreEqual("Bearer", capturedRequest.Headers.Authorization.Scheme);
+        Assert.AreEqual("test-api-key", capturedRequest.Headers.Authorization.Parameter);
     }
 
     [TestMethod]
-    public async Task GenerateCardArtAsync_IncludesNoLogoParameter() {
+    public async Task GenerateCardArtAsync_SendsJsonPayload() {
         // Arrange
         HttpRequestMessage? capturedRequest = null;
         SetupHttpResponseWithCapture(new byte[] { 1, 2, 3 }, req => capturedRequest = req);
@@ -95,23 +109,8 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        Assert.Contains("nologo=true", capturedRequest.RequestUri!.ToString());
-    }
-
-    [TestMethod]
-    public async Task GenerateCardArtAsync_EncodesCardNameInUrl() {
-        // Arrange
-        HttpRequestMessage? capturedRequest = null;
-        SetupHttpResponseWithCapture(new byte[] { 1, 2, 3 }, req => capturedRequest = req);
-
-        // Act
-        await _service.GenerateCardArtAsync("Fire & Ice", "Instant", null);
-
-        // Assert
-        Assert.IsNotNull(capturedRequest);
-        var url = capturedRequest.RequestUri!.ToString();
-        Assert.DoesNotContain("Fire & Ice", url);
-        Assert.Contains("Fire", url);
+        Assert.IsNotNull(capturedRequest.Content);
+        Assert.AreEqual("application/json", capturedRequest.Content.Headers.ContentType!.MediaType);
     }
 
     #endregion
@@ -129,9 +128,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("creature portrait", url);
-        Assert.Contains("dramatic pose", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("creature portrait", prompt);
+        Assert.Contains("dramatic pose", prompt);
     }
 
     [TestMethod]
@@ -145,9 +144,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("magical spell effect", url);
-        Assert.Contains("mystical", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("magical spell effect", prompt);
+        Assert.Contains("mystical", prompt);
     }
 
     [TestMethod]
@@ -161,8 +160,8 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("magical spell effect", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("magical spell effect", prompt);
     }
 
     [TestMethod]
@@ -176,9 +175,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("magical aura", url);
-        Assert.Contains("ethereal glow", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("magical aura", prompt);
+        Assert.Contains("ethereal glow", prompt);
     }
 
     [TestMethod]
@@ -192,9 +191,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("magical item", url);
-        Assert.Contains("detailed object", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("magical item", prompt);
+        Assert.Contains("detailed object", prompt);
     }
 
     [TestMethod]
@@ -208,9 +207,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("landscape", url);
-        Assert.Contains("environment", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("landscape", prompt);
+        Assert.Contains("environment", prompt);
     }
 
     #endregion
@@ -228,8 +227,8 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("Elf Druid", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("Elf Druid", prompt);
     }
 
     [TestMethod]
@@ -243,8 +242,8 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("Nameless", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("Nameless", prompt);
     }
 
     #endregion
@@ -262,9 +261,9 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("Fantasy art", url);
-        Assert.Contains("Magic the Gathering card art style", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("Fantasy art", prompt);
+        Assert.Contains("Magic the Gathering card art style", prompt);
     }
 
     [TestMethod]
@@ -278,11 +277,11 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("high fantasy", url);
-        Assert.Contains("detailed", url);
-        Assert.Contains("epic lighting", url);
-        Assert.Contains("professional illustration", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("high fantasy", prompt);
+        Assert.Contains("detailed", prompt);
+        Assert.Contains("epic lighting", prompt);
+        Assert.Contains("professional illustration", prompt);
     }
 
     [TestMethod]
@@ -296,8 +295,8 @@ public class ImageGeneratorServiceTest {
 
         // Assert
         Assert.IsNotNull(capturedRequest);
-        var url = Uri.UnescapeDataString(capturedRequest.RequestUri!.ToString());
-        Assert.Contains("Shivan Dragon", url);
+        var prompt = await GetPromptFromRequest(capturedRequest);
+        Assert.Contains("Shivan Dragon", prompt);
     }
 
     #endregion
@@ -379,6 +378,13 @@ public class ImageGeneratorServiceTest {
                 StatusCode = HttpStatusCode.OK,
                 Content    = new ByteArrayContent(content)
             });
+    }
+
+    private static async Task<string> GetPromptFromRequest(HttpRequestMessage request) {
+        Assert.IsNotNull(request.Content);
+        var content = await request.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(content);
+        return doc.RootElement.GetProperty("inputs").GetString()!;
     }
 
     #endregion

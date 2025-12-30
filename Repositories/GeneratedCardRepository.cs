@@ -32,10 +32,27 @@ public class GeneratedCardRepository : IGeneratedCardRepository {
             .ToListAsync();
     }
 
+    public async Task<List<GeneratedCard>> GetByUserIdAsync(string userId) {
+        return await _context.GeneratedCards
+            .Where(c => c.CreatedBy == userId)
+            .OrderByDescending(c => c.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task<bool> IsOwnerAsync(int cardId, string userId) {
+        return await _context.GeneratedCards
+            .AnyAsync(c => c.Id == cardId && c.CreatedBy == userId);
+    }
+
     public async Task<GeneratedCard> AddAsync(GeneratedCard card) {
         _context.GeneratedCards.Add(card);
         await _context.SaveChangesAsync();
         return card;
+    }
+
+    public async Task UpdateAsync(GeneratedCard card) {
+        _context.GeneratedCards.Update(card);
+        await _context.SaveChangesAsync();
     }
 
     public async Task ShareAsync(int id) {

@@ -3,6 +3,7 @@ using AiMagicCardsGenerator.Repositories;
 using AiMagicCardsGenerator.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
 
 namespace AiMagicCardsGenerator.Controllers;
 
@@ -33,6 +34,8 @@ public class GeneratorController : Controller {
         var result = await _generatorService.GenerateRandomCardAsync();
         var imageBytes = await _cardRenderService.RenderCardAsync(result.Card);
 
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
         var generatedCard = new GeneratedCard
         {
             Name = result.Card.Name,
@@ -45,6 +48,7 @@ public class GeneratorController : Controller {
             Colors = result.Card.Colors,
             FlavorText = result.Card.FlavorText,
             ImageData = imageBytes,
+            CreatedBy = userId ?? "Anonymous",
             CreatorIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown"
         };
 
@@ -65,6 +69,14 @@ public class GeneratorController : Controller {
     [HttpPost]
     public async Task<IActionResult> Share(int id)
     {
+        var card = await _generatedCardRepository.GetByIdAsync(id);
+        if (card == null)
+            return NotFound();
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (card.CreatedBy != userId)
+            return Forbid();
+
         await _generatedCardRepository.ShareAsync(id);
         return RedirectToAction("Index", "Home");
     }
