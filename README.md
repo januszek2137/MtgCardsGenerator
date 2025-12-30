@@ -14,15 +14,25 @@ An ASP.NET Core MVC application that harnesses the power of Groq's LLM to create
 
 🎨 **AI Card Generation** - Leverage Groq's Llama 3.3 70B model to generate balanced, creative MTG cards
 
+🖼️ **AI Card Artwork** - Generate custom card artwork using HuggingFace's Stable Diffusion XL
+
 📥 **Scryfall Integration** - Import bulk card data directly from Scryfall's comprehensive database
 
-🖼️ **Professional Rendering** - Generate PNG images with authentic MTG fonts, frames, and mana symbols
+🎴 **Card Sharing & Gallery** - Share your generated cards in a public gallery for others to see
+
+❤️ **Like System** - Like your favorite cards with real-time updates via Server-Sent Events
+
+💾 **Card Persistence** - All generated cards saved to database with image data and metadata
+
+🔐 **User Authentication** - ASP.NET Core Identity integration for card ownership and likes
 
 🎯 **CMC-Based Balance** - Cards are generated based on converted mana cost for power-level consistency
 
 🔍 **Card Browser** - Browse and search through imported cards with pagination
 
 🎭 **Multi-Color Support** - Full support for all color identities (W/U/B/R/G/Multicolor/Colorless)
+
+⏱️ **Rate Limiting** - Built-in rate limiting to prevent API abuse on card generation
 
 📊 **Database Storage** - SQLite-based persistence with EF Core for fast querying
 
@@ -34,6 +44,7 @@ An ASP.NET Core MVC application that harnesses the power of Groq's LLM to create
 
 - ✅ [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - ✅ [Groq API Key](https://console.groq.com/) (free tier available)
+- ✅ [HuggingFace API Key](https://huggingface.co/settings/tokens) (for card artwork generation)
 - ✅ SQLite support (included with .NET)
 
 ### Installation
@@ -44,13 +55,16 @@ git clone https://github.com/yourusername/AiMagicCardsGenerator.git
 cd AiMagicCardsGenerator
 ```
 
-2. **Configure your API key**
+2. **Configure your API keys**
 
 Edit `appsettings.Development.json`:
 ```json
 {
   "Groq": {
     "ApiKey": "your-groq-api-key-here"
+  },
+  "HuggingFace": {
+    "ApiKey": "your-huggingface-api-key-here"
   }
 }
 ```
@@ -58,6 +72,7 @@ Edit `appsettings.Development.json`:
 Or use .NET User Secrets (recommended):
 ```bash
 dotnet user-secrets set "Groq:ApiKey" "your-groq-api-key-here"
+dotnet user-secrets set "HuggingFace:ApiKey" "your-huggingface-api-key-here"
 ```
 
 3. **Download assets**
@@ -97,19 +112,19 @@ Visit `https://localhost:7073` 🎉
 **Via Web Interface:**
 1. Go to **Generator** page
 2. Click **Generate Random Card**
-3. View the generated card with its source examples
-4. Download as PNG image
+3. View the generated card on the result page
+4. **Share** your card to the public gallery
+5. **Download** as PNG image
+6. Rate-limited to prevent abuse
 
-**Via API:**
-```bash
-# Get JSON card data
-curl https://localhost:7073/Generator/GenerateJson
+### Browse and Like Shared Cards ❤️
 
-# Get rendered PNG image
-curl https://localhost:7073/Generator/GenerateImage -o card.png
-```
+1. Visit the **Home** page to see the gallery of shared cards
+2. View recently shared cards and top-liked cards
+3. **Sign in** to like cards (ASP.NET Core Identity)
+4. Real-time like count updates via Server-Sent Events
 
-### Browse Cards 🔍
+### Browse Imported Cards 🔍
 
 1. Visit **Cards** section
 2. Browse paginated card list (20 per page)
@@ -127,7 +142,8 @@ curl https://localhost:7073/Generator/GenerateImage -o card.png
 - 🌐 HttpClient for external APIs
 
 **AI & APIs:**
-- 🤖 [Groq](https://groq.com/) - Llama 3.3 70B LLM
+- 🤖 [Groq](https://groq.com/) - Llama 3.3 70B LLM for card design
+- 🎨 [HuggingFace](https://huggingface.co/) - Stable Diffusion XL for card artwork
 - 🃏 [Scryfall API](https://scryfall.com/docs/api) - MTG card database
 
 **Image Processing:**
@@ -140,6 +156,7 @@ curl https://localhost:7073/Generator/GenerateImage -o card.png
 - 🎭 Razor Views with Bootstrap 5
 - 💅 Custom CSS styling
 - ⚡ Vanilla JavaScript
+- 📡 Server-Sent Events (SSE) for real-time like updates
 
 ---
 
@@ -148,32 +165,48 @@ curl https://localhost:7073/Generator/GenerateImage -o card.png
 ```
 AiMagicCardsGenerator/
 ├── 🎮 Controllers/          # MVC Controllers
-│   ├── HomeController.cs
+│   ├── HomeController.cs    # Gallery with likes & SSE
 │   ├── DataController.cs    # Scryfall import
 │   ├── CardsController.cs   # Card browsing
-│   └── GeneratorController.cs
+│   └── GeneratorController.cs # Generation & sharing
 ├── 📊 Models/
 │   ├── Entities/            # Domain models
-│   │   └── Card.cs
+│   │   ├── Card.cs          # Imported Scryfall cards
+│   │   ├── GeneratedCard.cs # User-generated cards
+│   │   └── CardLike.cs      # Like relationships
 │   └── Dto/                 # Data transfer objects
 │       └── ScryfallModels.cs
 ├── 🗄️ Data/
 │   ├── ApplicationDbContext.cs
 │   └── Migrations/          # EF Core migrations
 ├── 🔧 Services/             # Business logic
-│   ├── ICardService.cs
+│   ├── Interfaces/
+│   │   ├── ICardService.cs
+│   │   ├── IGeneratorService.cs
+│   │   ├── IScryfallService.cs
+│   │   ├── ICardRenderService.cs
+│   │   ├── IImageGeneratorService.cs
+│   │   ├── ICardLikeService.cs
+│   │   └── ILikesBroadcastService.cs
 │   ├── CardService.cs
-│   ├── IGeneratorService.cs
 │   ├── GeneratorService.cs
-│   ├── IScryfallService.cs
 │   ├── ScryfallService.cs
-│   ├── ICardRenderService.cs
 │   ├── CardRenderService.cs
+│   ├── ImageGeneratorService.cs # HuggingFace integration
+│   ├── CardLikeService.cs
+│   ├── LikesBroadcastService.cs # SSE broadcasting
 │   └── CardRenderConfig.cs
 ├── 📦 Repositories/         # Data access
-│   ├── ICardRepository.cs
-│   └── CardRepository.cs
+│   ├── Interfaces/
+│   │   ├── ICardRepository.cs
+│   │   ├── IGeneratedCardRepository.cs
+│   │   └── ICardLikeRepository.cs
+│   ├── CardRepository.cs
+│   ├── GeneratedCardRepository.cs
+│   └── CardLikeRepository.cs
 ├── 🎨 Views/                # Razor templates
+├── 🔐 Areas/Identity/       # ASP.NET Core Identity pages
+├── 🧪 AiMagicCardsGenerator.Tests/ # Unit tests
 ├── 🌐 wwwroot/
 │   └── assets/
 │       ├── frames/          # Card frame images
@@ -190,12 +223,15 @@ AiMagicCardsGenerator/
 2. 🔍 **Example Gathering** - Fetch 5 random cards with matching CMC from database
 3. 🤖 **LLM Prompt** - Send structured prompt to Groq API with examples
 4. 📝 **JSON Parsing** - Extract and validate card data from LLM response
-5. 🖼️ **Rendering** - Generate card image using ImageSharp
+5. 🎨 **Artwork Generation** - Generate custom artwork via HuggingFace Stable Diffusion
+6. 🖼️ **Card Rendering** - Generate card image using ImageSharp
    - Load appropriate color frame
+   - Overlay generated artwork in art box
    - Render card name, mana cost, type line
    - Process oracle text with mana symbols
    - Add power/toughness for creatures
-6. ✅ **Return Result** - Deliver card data and/or PNG image
+7. 💾 **Database Storage** - Save generated card with image data and metadata
+8. ✅ **Return Result** - Redirect to result page with share and download options
 
 ---
 
@@ -211,6 +247,9 @@ AiMagicCardsGenerator/
   },
   "Groq": {
     "ApiKey": "your-groq-api-key-here"
+  },
+  "HuggingFace": {
+    "ApiKey": "your-huggingface-api-key-here"
   }
 }
 ```
@@ -255,24 +294,15 @@ dotnet ef migrations remove
 ### Testing
 
 ```bash
-# Run tests (when available)
+# Run all tests
 dotnet test
+
+# Run specific test project
+dotnet test AiMagicCardsGenerator.Tests/AiMagicCardsGenerator.Tests.csproj
+
+# Run with detailed output
+dotnet test --verbosity detailed
 ```
-
----
-
-## 📝 API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Landing page |
-| `/Data` | GET | View Scryfall bulk data info |
-| `/Data/Import` | POST | Import cards from Scryfall |
-| `/Cards` | GET | Browse cards (paginated) |
-| `/Cards/Details/{id}` | GET | View single card details |
-| `/Generator` | GET | Card generation page |
-| `/Generator/GenerateJson` | GET | Generate card (JSON response) |
-| `/Generator/GenerateImage` | GET | Generate card (PNG image) |
 
 ---
 
