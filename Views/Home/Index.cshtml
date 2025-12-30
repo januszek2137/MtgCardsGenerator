@@ -1,8 +1,10 @@
-﻿@model List<AiMagicCardsGenerator.Models.Entities.GeneratedCard>
-
+﻿@using Microsoft.AspNetCore.Identity
+@model List<AiMagicCardsGenerator.Models.Entities.GeneratedCard>
 @{
     ViewData["Title"] = "Home";
-    var topCards = ViewBag.TopCards as List<AiMagicCardsGenerator.Models.Entities.GeneratedCard>;
+    var topCards  = ViewBag.TopCards as List<AiMagicCardsGenerator.Models.Entities.GeneratedCard>;
+    var userLikes = ViewBag.UserLikes as HashSet<int> ?? new HashSet<int>();
+    var isAuth    = User.Identity.IsAuthenticated;
 }
 
 <style>
@@ -189,10 +191,18 @@
                     <div class="shared-card-type">@card.TypeLine</div>
                     <div class="shared-card-footer">
                         <span class="shared-card-date">@card.CreatedAt.ToString("MMM dd, yyyy")</span>
-                        <form asp-action="Like" method="post" style="display: inline;">
-                            <input type="hidden" name="id" value="@card.Id" />
-                            <button type="submit" class="like-btn">❤️ @card.Likes</button>
-                        </form>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            var liked = userLikes.Contains(card.Id);
+                            <button type="button" class="like-btn @(liked ? "liked" : "")" data-card-id="@card.Id">
+                                <span class="like-icon">@(liked ? "❤️" : "🤍")</span>
+                                <span class="like-count">@card.Likes</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="like-display" data-card-id="@card.Id">❤️ <span class="like-count">@card.Likes</span></span>
+                        }
                     </div>
                 </div>
             </div>
@@ -216,10 +226,18 @@
                     <div class="shared-card-type">@card.TypeLine</div>
                     <div class="shared-card-footer">
                         <span class="shared-card-date">@card.CreatedAt.ToString("MMM dd, yyyy")</span>
-                        <form asp-action="Like" method="post" style="display: inline;">
-                            <input type="hidden" name="id" value="@card.Id" />
-                            <button type="submit" class="like-btn">❤️ @card.Likes</button>
-                        </form>
+                        @if (isAuth)
+                        {
+                            var liked = userLikes.Contains(card.Id);
+                            <button type="button" class="like-btn @(liked ? "liked" : "")" data-card-id="@card.Id">
+                                <span class="like-icon">@(liked ? "❤️" : "🤍")</span>
+                                <span class="like-count">@card.Likes</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="like-display" data-card-id="@card.Id">❤️ <span class="like-count">@card.Likes</span></span>
+                        }
                     </div>
                 </div>
             </div>
@@ -233,4 +251,39 @@ else
         <p class="empty-state-text">No cards shared yet. Be the first to create and share a card!</p>
         <a asp-controller="Generator" asp-action="Index" class="cta-btn">🎴 Generate Your First Card</a>
     </div>
+}
+
+@section Scripts {
+    <script>
+        const sse = new EventSource('/Home/LikeStream');
+        sse.onmessage = e => {
+            const [id, likes] = e.data.split(':');
+            document.querySelectorAll(`[data-card-id="${id}"] .like-count`).forEach(el => el.textContent = likes);
+        };
+        
+        @if (isAuth)
+        {
+            <text>
+            document.querySelectorAll('.like-btn').forEach(btn => btn.onclick = async function() {
+                this.disabled = true;
+                const cardId = this.dataset.cardId;
+                const res = await fetch(`/Home/Like?id=${cardId}`, {
+                    method: 'POST',
+                    headers: { 'RequestVerificationToken': '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)[1] }
+                });
+                if (res.ok) {
+                    const { likes, isLiked } = await res.json();
+                    document.querySelectorAll(`.like-btn[data-card-id="${cardId}"]`).forEach(b => {
+                        b.querySelector('.like-icon').textContent = isLiked ? '❤️' : '🤍';
+                        b.classList.toggle('liked', isLiked);
+                        b.querySelector('.like-count').textContent = likes;
+                    });
+                } else if (res.status === 401) {
+                    window.location.href = '@Url.Page("/Account/Login", new { area = "Identity" })';
+                }
+                this.disabled = false;
+            });
+            </text>
+        }
+    </script>
 }

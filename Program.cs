@@ -24,6 +24,9 @@ builder.Services.AddHttpClient<IScryfallService, ScryfallService>(client => {
 builder.Services.AddHttpClient<IGeneratorService, GeneratorService>();
 builder.Services.AddScoped<ICardRenderService, CardRenderService>();
 builder.Services.AddScoped<IGeneratedCardRepository, GeneratedCardRepository>();
+builder.Services.AddScoped<ICardLikeRepository, CardLikeRepository>();
+builder.Services.AddScoped<ICardLikeService, CardLikeService>();
+builder.Services.AddSingleton<ILikesBroadcastService, LikesBroadcastService>();
 builder.Services.AddHttpClient<IImageGeneratorService, ImageGeneratorService>(client => {
     client.Timeout = TimeSpan.FromSeconds(60); // 60 seconds for image generation
 });

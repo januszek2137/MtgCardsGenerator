@@ -3,6 +3,7 @@ using System;
 using AiMagicCardsGenerator.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AiMagicCardsGenerator.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251228204124_AddGeneratedCards")]
+    partial class AddGeneratedCards
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
@@ -81,30 +84,6 @@ namespace AiMagicCardsGenerator.Data.Migrations
                     b.ToTable("Cards");
                 });
 
-            modelBuilder.Entity("AiMagicCardsGenerator.Models.Entities.CardLike", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("GeneratedCardId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GeneratedCardId", "UserId")
-                        .IsUnique();
-
-                    b.ToTable("CardLikes");
-                });
-
             modelBuilder.Entity("AiMagicCardsGenerator.Models.Entities.GeneratedCard", b =>
                 {
                     b.Property<int>("Id")
@@ -119,9 +98,6 @@ namespace AiMagicCardsGenerator.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CreatedBy")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CreatorIp")
@@ -362,17 +338,6 @@ namespace AiMagicCardsGenerator.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("AiMagicCardsGenerator.Models.Entities.CardLike", b =>
-                {
-                    b.HasOne("AiMagicCardsGenerator.Models.Entities.GeneratedCard", "GeneratedCard")
-                        .WithMany("CardLikes")
-                        .HasForeignKey("GeneratedCardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("GeneratedCard");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -422,11 +387,6 @@ namespace AiMagicCardsGenerator.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("AiMagicCardsGenerator.Models.Entities.GeneratedCard", b =>
-                {
-                    b.Navigation("CardLikes");
                 });
 #pragma warning restore 612, 618
         }

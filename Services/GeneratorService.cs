@@ -96,7 +96,6 @@ public class GeneratorService : IGeneratorService {
 
         var response = await _httpClient.SendAsync(request);
     
-        // Debug - zobacz co zwraca
         var responseBody = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {

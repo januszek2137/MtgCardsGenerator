@@ -1,7 +1,10 @@
-﻿@model AiMagicCardsGenerator.Models.Entities.GeneratedCard
+@using System.Security.Claims
+@model AiMagicCardsGenerator.Models.Entities.GeneratedCard
 
 @{
     ViewData["Title"] = Model.Name;
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isOwner = !string.IsNullOrEmpty(userId) && userId == Model.CreatedBy;
 }
 
 <style>
@@ -92,21 +95,28 @@
 
     <img src="@Url.Action("Image", new { id = Model.Id })" alt="@Model.Name" class="card-image" />
 
-    @if (Model.IsShared)
+    @if (Model.IsShared && isOwner)
     {
         <div class="shared-badge">✅ Shared to Gallery</div>
     }
 
     <div class="card-actions">
-        @if (!Model.IsShared)
+        @if (isOwner)
         {
-            <form asp-action="Share" method="post" style="display: inline;">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn-action btn-share">📤 Share to Gallery</button>
-            </form>
-        }
+            @if (!Model.IsShared)
+            {
+                <form asp-action="Share" method="post" style="display: inline;">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn-action btn-share">📤 Share to Gallery</button>
+                </form>
+            }
 
-        <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
-        <a href="@Url.Action("Index")" class="btn-action btn-generate">🎴 Generate Another</a>
+            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
+            <a href="@Url.Action("Index")" class="btn-action btn-generate">🎴 Generate Another</a>
+        }
+        else
+        {
+            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
+        }
     </div>
 </div>
