@@ -410,3 +410,4 @@ FodyWeavers.xsd
 # Project-specific excludes
 CLAUDE.md
 appsettings.Development.json
+appsettings.Production.json
