@@ -2,206 +2,26 @@
     ViewData["Title"] = "Card Generator";
 }
 
-<style>
-    .hero-section {
-        text-align: center;
-        padding: 4rem 0;
-    }
+<div class="hero-section" data-aos="fade-up">
+    <h1 class="hero-title" data-aos="fade-up" >
+        <i class="fas fa-wand-magic-sparkles"></i>
+        AI Card Generator
+    </h1>
+    <p class="hero-subtitle" data-aos="fade-up" >
+        Create unique Magic: The Gathering cards powered by artificial intelligence
+    </p>
 
-    .hero-title {
-        font-size: 3rem;
-        font-weight: bold;
-        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-        color: #888;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-    }
-
-    .generate-btn {
-        background: linear-gradient(135deg, #D4AF37, #B8960C);
-        border: none;
-        color: #000;
-        font-weight: bold;
-        font-size: 1.3rem;
-        padding: 1rem 3rem;
-        border-radius: 50px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
-    }
-
-    .generate-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.6);
-        background: linear-gradient(135deg, #F4CF47, #D4AF37);
-    }
-
-    .generate-btn:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* Progress Bar Styles */
-    .progress-container {
-        display: none;
-        max-width: 500px;
-        margin: 2rem auto 0;
-        text-align: center;
-    }
-
-    .progress-container.active {
-        display: block;
-    }
-
-    .progress-bar-wrapper {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 50px;
-        height: 24px;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .progress-bar-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
-        background-size: 200% 100%;
-        animation: shimmer 2s linear infinite;
-        border-radius: 50px;
-        transition: width 0.5s ease;
-        width: 0%;
-    }
-
-    @@keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-
-    .progress-status {
-        margin-top: 1rem;
-        color: #D4AF37;
-        font-size: 1rem;
-        font-weight: 500;
-        min-height: 1.5rem;
-    }
-
-    .progress-status .spinner {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        border: 2px solid rgba(212, 175, 55, 0.3);
-        border-top-color: #D4AF37;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-right: 8px;
-        vertical-align: middle;
-    }
-
-    @@keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    .progress-steps {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1.5rem;
-        padding: 0 0.5rem;
-    }
-
-    .progress-step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        opacity: 0.4;
-        transition: opacity 0.3s ease;
-    }
-
-    .progress-step.active,
-    .progress-step.completed {
-        opacity: 1;
-    }
-
-    .step-icon {
-        font-size: 1.5rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .step-label {
-        font-size: 0.75rem;
-        color: #888;
-    }
-
-    .progress-step.active .step-label {
-        color: #D4AF37;
-    }
-
-    .progress-step.completed .step-icon::after {
-        content: " ✓";
-        color: #4CAF50;
-        font-size: 0.8rem;
-    }
-
-    .features {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 4rem;
-        padding-top: 3rem;
-        border-top: 1px solid rgba(212, 175, 55, 0.2);
-    }
-
-    .feature-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-
-    .feature-card:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(212, 175, 55, 0.5);
-        transform: translateY(-5px);
-    }
-
-    .feature-icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .feature-title {
-        color: #D4AF37;
-        font-size: 1.2rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-
-    .feature-desc {
-        color: #888;
-        font-size: 0.95rem;
-    }
-</style>
-
-<div class="hero-section">
-    <h1 class="hero-title">✨ AI Card Generator</h1>
-    <p class="hero-subtitle">Create unique Magic: The Gathering cards powered by artificial intelligence</p>
-
-    <form asp-action="Generate" method="post" id="generateForm">
-        <button type="submit" class="generate-btn" id="generateBtn">🎴 Generate Random Card</button>
+    <form asp-action="Generate" method="post" id="generateForm" data-aos="fade-up" >
+        <button type="submit" class="generate-btn" id="generateBtn">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            Generate Random Card
+        </button>
     </form>
 
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar-wrapper">
             <div class="progress-bar-fill" id="progressBar"></div>
+            <div class="progress-percentage" id="progressPercentage">0%</div>
         </div>
         <div class="progress-status" id="progressStatus">
             <span class="spinner"></span>
@@ -209,19 +29,30 @@
         </div>
         <div class="progress-steps">
             <div class="progress-step" id="step1">
-                <span class="step-icon">🎲</span>
+                <div class="step-icon-circle">
+                    <i class="fas fa-dice"></i>
+                </div>
                 <span class="step-label">Finding cards</span>
             </div>
+            <div class="progress-step-line"></div>
             <div class="progress-step" id="step2">
-                <span class="step-icon">🤖</span>
+                <div class="step-icon-circle">
+                    <i class="fas fa-robot"></i>
+                </div>
                 <span class="step-label">AI generation</span>
             </div>
+            <div class="progress-step-line"></div>
             <div class="progress-step" id="step3">
-                <span class="step-icon">🎨</span>
+                <div class="step-icon-circle">
+                    <i class="fas fa-palette"></i>
+                </div>
                 <span class="step-label">Creating art</span>
             </div>
+            <div class="progress-step-line"></div>
             <div class="progress-step" id="step4">
-                <span class="step-icon">🖼️</span>
+                <div class="step-icon-circle">
+                    <i class="fas fa-image"></i>
+                </div>
                 <span class="step-label">Rendering</span>
             </div>
         </div>
@@ -229,123 +60,29 @@
 </div>
 
 <div class="features">
-    <div class="feature-card">
-        <div class="feature-icon">🤖</div>
+    <div class="feature-card" data-aos="fade-up" >
+        <div class="feature-icon">
+            <i class="fas fa-robot"></i>
+        </div>
         <div class="feature-title">AI-Powered</div>
         <div class="feature-desc">Cards generated using advanced language models trained on real MTG data</div>
     </div>
-    <div class="feature-card">
-        <div class="feature-icon">🎨</div>
+    <div class="feature-card" data-aos="fade-up" >
+        <div class="feature-icon">
+            <i class="fas fa-palette"></i>
+        </div>
         <div class="feature-title">Unique Art</div>
         <div class="feature-desc">Each card features AI-generated artwork matching the card's theme</div>
     </div>
-    <div class="feature-card">
-        <div class="feature-icon">⚖️</div>
+    <div class="feature-card" data-aos="fade-up" >
+        <div class="feature-icon">
+            <i class="fas fa-balance-scale"></i>
+        </div>
         <div class="feature-title">Balanced Design</div>
         <div class="feature-desc">Cards are based on patterns from 30,000+ real MTG cards</div>
     </div>
 </div>
 
 @section Scripts {
-    <script>
-        const form = document.getElementById('generateForm');
-        const btn = document.getElementById('generateBtn');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBar = document.getElementById('progressBar');
-        const statusText = document.getElementById('statusText');
-
-        const stepMessages = {
-            step1: [
-                'Finding similar cards in database...',
-                'Searching through 30,000+ cards...',
-                'Analyzing mana curves...',
-                'Consulting the ancient archives...',
-                'Rolling for card type...',
-                'Shuffling the multiverse...',
-                'Querying the Blind Eternities...'
-            ],
-            step2: [
-                'AI is generating your card...',
-                'Channeling creative mana...',
-                'Neural networks are thinking...',
-                'Crafting card mechanics...',
-                'Balancing power and toughness...',
-                'Writing flavor text...',
-                'Consulting the Planeswalker council...',
-                'Brewing something unique...',
-                'Invoking machine learning spirits...'
-            ],
-            step3: [
-                'Creating unique artwork...',
-                'Painting with digital brushes...',
-                'Summoning artistic vision...',
-                'Rendering magical landscapes...',
-                'AI artist is at work...',
-                'Capturing the card\'s essence...',
-                'Mixing colors from the Æther...',
-                'Illustrating your creation...',
-                'Conjuring visual magic...'
-            ],
-            step4: [
-                'Rendering final card...',
-                'Applying card frame...',
-                'Adding finishing touches...',
-                'Polishing the borders...',
-                'Enchanting the final result...',
-                'Assembling card components...',
-                'Almost ready to cast...',
-                'Preparing for reveal...'
-            ]
-        };
-
-        function getRandomMessage(stepId) {
-            const messages = stepMessages[stepId];
-            return messages[Math.floor(Math.random() * messages.length)];
-        }
-
-        const steps = [
-            { id: 'step1', progress: 15 },
-            { id: 'step2', progress: 40 },
-            { id: 'step3', progress: 70 },
-            { id: 'step4', progress: 90 }
-        ];
-
-        form.addEventListener('submit', function(e) {
-            btn.disabled = true;
-            btn.innerHTML = '⏳ Generating...';
-            progressContainer.classList.add('active');
-
-            let currentStep = 0;
-
-            function advanceStep() {
-                if (currentStep > 0) {
-                    document.getElementById(steps[currentStep - 1].id).classList.remove('active');
-                    document.getElementById(steps[currentStep - 1].id).classList.add('completed');
-                }
-
-                if (currentStep < steps.length) {
-                    const step = steps[currentStep];
-                    document.getElementById(step.id).classList.add('active');
-                    progressBar.style.width = step.progress + '%';
-                    statusText.textContent = getRandomMessage(step.id);
-                    currentStep++;
-
-                    const delay = 2000 + Math.random() * 3000;
-                    setTimeout(advanceStep, delay);
-                } else {
-                    progressBar.style.width = '100%';
-                    const finalMessages = [
-                        'Almost there...',
-                        'Finalizing your card...',
-                        'Just a moment more...',
-                        'Preparing the grand reveal...',
-                        'Your card is almost ready...'
-                    ];
-                    statusText.textContent = finalMessages[Math.floor(Math.random() * finalMessages.length)];
-                }
-            }
-
-            advanceStep();
-        });
-    </script>
+    <script src="~/js/components/generator.js" asp-append-version="true"></script>
 }

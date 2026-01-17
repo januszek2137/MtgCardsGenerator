@@ -7,182 +7,32 @@
     var isAuth    = User.Identity.IsAuthenticated;
 }
 
-<style>
-    .hero-section {
-        text-align: center;
-        padding: 3rem 0;
-    }
-
-    .hero-title {
-        font-size: 3.5rem;
-        font-weight: bold;
-        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 1rem;
-    }
-
-    .hero-subtitle {
-        color: #888;
-        font-size: 1.3rem;
-        margin-bottom: 2rem;
-    }
-
-    .cta-btn {
-        background: linear-gradient(135deg, #D4AF37, #B8960C);
-        border: none;
-        color: #000;
-        font-weight: bold;
-        font-size: 1.2rem;
-        padding: 1rem 2.5rem;
-        border-radius: 50px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: inline-block;
-    }
-
-    .cta-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5);
-        color: #000;
-    }
-
-    .section-title {
-        font-size: 2rem;
-        color: #D4AF37;
-        margin: 3rem 0 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(212, 175, 55, 0.3);
-    }
-
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 2rem;
-        padding: 1rem 0;
-    }
-
-    .shared-card {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 15px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .shared-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(212, 175, 55, 0.5);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    .shared-card-link {
-        text-decoration: none;
-        display: block;
-    }
-
-    .shared-card-image {
-        width: 100%;
-        aspect-ratio: 5/7;
-        object-fit: cover;
-        display: block;
-    }
-
-    .shared-card-info {
-        padding: 1rem;
-    }
-
-    .shared-card-name {
-        color: #D4AF37;
-        font-weight: bold;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .shared-card-type {
-        color: #888;
-        font-size: 0.85rem;
-        margin-bottom: 0.75rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .shared-card-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .shared-card-date {
-        color: #666;
-        font-size: 0.8rem;
-    }
-
-    .like-btn {
-        background: transparent;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        color: #D4AF37;
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 0.9rem;
-    }
-
-    .like-btn:hover {
-        background: rgba(212, 175, 55, 0.2);
-        border-color: #D4AF37;
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 4rem 2rem;
-        color: #666;
-        background: rgba(0, 0, 0, 0.3);
-        border-radius: 15px;
-        border: 1px solid rgba(212, 175, 55, 0.2);
-    }
-
-    .empty-state-icon {
-        font-size: 4rem;
-        margin-bottom: 1rem;
-    }
-
-    .empty-state-text {
-        font-size: 1.2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    @@media (max-width: 768px) {
-        .hero-title {
-            font-size: 2.2rem;
-        }
-
-        .cards-grid {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-    }
-</style>
-
 <div class="hero-section">
-    <h1 class="hero-title">⚔️ MTG Card Generator</h1>
-    <p class="hero-subtitle">Create unique AI-powered Magic: The Gathering cards</p>
-    <a asp-controller="Generator" asp-action="Index" class="cta-btn">🎴 Generate Your Card</a>
+    <h1 class="hero-title" data-aos="fade-up" data-aos-delay="0">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        MTG Card Generator
+    </h1>
+    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="0">
+        Create unique AI-powered Magic: The Gathering cards
+    </p>
+    <div data-aos="fade-up" data-aos-delay="0">
+        <a asp-controller="Generator" asp-action="Index" class="cta-btn">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            Generate Your Card
+        </a>
+    </div>
 </div>
 
 @if (topCards != null && topCards.Any())
 {
-    <h2 class="section-title">🏆 Top Rated Cards</h2>
+    <h2 class="section-title">
+        <i class="fas fa-trophy"></i>
+        Top Rated Cards
+    </h2>
     <div class="cards-grid">
         @foreach (var card in topCards)
         {
-            <div class="shared-card">
+            <div class="shared-card" data-aos="fade-up">
                 <a asp-controller="Generator" asp-action="Result" asp-route-id="@card.Id" class="shared-card-link">
                     <img src="@Url.Action("Image", "Generator", new { id = card.Id })" alt="@card.Name" class="shared-card-image" />
                 </a>
@@ -190,18 +40,24 @@
                     <div class="shared-card-name">@card.Name</div>
                     <div class="shared-card-type">@card.TypeLine</div>
                     <div class="shared-card-footer">
-                        <span class="shared-card-date">@card.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        <span class="shared-card-date">
+                            <i class="far fa-calendar"></i>
+                            @card.CreatedAt.ToString("MMM dd, yyyy")
+                        </span>
                         @if (User.Identity != null && User.Identity.IsAuthenticated)
                         {
                             var liked = userLikes.Contains(card.Id);
                             <button type="button" class="like-btn @(liked ? "liked" : "")" data-card-id="@card.Id">
-                                <span class="like-icon">@(liked ? "❤️" : "🤍")</span>
+                                <i class="@(liked ? "fas" : "far") fa-heart"></i>
                                 <span class="like-count">@card.Likes</span>
                             </button>
                         }
                         else
                         {
-                            <span class="like-display" data-card-id="@card.Id">❤️ <span class="like-count">@card.Likes</span></span>
+                            <span class="like-display" data-card-id="@card.Id">
+                                <i class="fas fa-heart"></i>
+                                <span class="like-count">@card.Likes</span>
+                            </span>
                         }
                     </div>
                 </div>
@@ -210,14 +66,17 @@
     </div>
 }
 
-<h2 class="section-title">🆕 Recently Shared</h2>
+<h2 class="section-title">
+    <i class="fas fa-star"></i>
+    Recently Shared
+</h2>
 
 @if (Model != null && Model.Any())
 {
     <div class="cards-grid">
         @foreach (var card in Model)
         {
-            <div class="shared-card">
+            <div class="shared-card" data-aos="fade-up">
                 <a asp-controller="Generator" asp-action="Result" asp-route-id="@card.Id" class="shared-card-link">
                     <img src="@Url.Action("Image", "Generator", new { id = card.Id })" alt="@card.Name" class="shared-card-image" />
                 </a>
@@ -225,18 +84,24 @@
                     <div class="shared-card-name">@card.Name</div>
                     <div class="shared-card-type">@card.TypeLine</div>
                     <div class="shared-card-footer">
-                        <span class="shared-card-date">@card.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        <span class="shared-card-date">
+                            <i class="far fa-calendar"></i>
+                            @card.CreatedAt.ToString("MMM dd, yyyy")
+                        </span>
                         @if (isAuth)
                         {
                             var liked = userLikes.Contains(card.Id);
                             <button type="button" class="like-btn @(liked ? "liked" : "")" data-card-id="@card.Id">
-                                <span class="like-icon">@(liked ? "❤️" : "🤍")</span>
+                                <i class="@(liked ? "fas" : "far") fa-heart"></i>
                                 <span class="like-count">@card.Likes</span>
                             </button>
                         }
                         else
                         {
-                            <span class="like-display" data-card-id="@card.Id">❤️ <span class="like-count">@card.Likes</span></span>
+                            <span class="like-display" data-card-id="@card.Id">
+                                <i class="fas fa-heart"></i>
+                                <span class="like-count">@card.Likes</span>
+                            </span>
                         }
                     </div>
                 </div>
@@ -246,44 +111,37 @@
 }
 else
 {
-    <div class="empty-state">
-        <div class="empty-state-icon">🎴</div>
+    <div class="empty-state" data-aos="fade-up">
+        <div class="empty-state-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
         <p class="empty-state-text">No cards shared yet. Be the first to create and share a card!</p>
-        <a asp-controller="Generator" asp-action="Index" class="cta-btn">🎴 Generate Your First Card</a>
+        <a asp-controller="Generator" asp-action="Index" class="cta-btn">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            Generate Your First Card
+        </a>
     </div>
 }
 
 @section Scripts {
+    <script src="~/js/components/card-likes.js" asp-append-version="true"></script>
     <script>
-        const sse = new EventSource('/Home/LikeStream');
-        sse.onmessage = e => {
-            const [id, likes] = e.data.split(':');
-            document.querySelectorAll(`[data-card-id="${id}"] .like-count`).forEach(el => el.textContent = likes);
-        };
-        
-        @if (isAuth)
-        {
-            <text>
-            document.querySelectorAll('.like-btn').forEach(btn => btn.onclick = async function() {
-                this.disabled = true;
-                const cardId = this.dataset.cardId;
-                const res = await fetch(`/Home/Like?id=${cardId}`, {
-                    method: 'POST',
-                    headers: { 'RequestVerificationToken': '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/)[1] }
-                });
-                if (res.ok) {
-                    const { likes, isLiked } = await res.json();
-                    document.querySelectorAll(`.like-btn[data-card-id="${cardId}"]`).forEach(b => {
-                        b.querySelector('.like-icon').textContent = isLiked ? '❤️' : '🤍';
-                        b.classList.toggle('liked', isLiked);
-                        b.querySelector('.like-count').textContent = likes;
-                    });
-                } else if (res.status === 401) {
-                    window.location.href = '@Url.Page("/Account/Login", new { area = "Identity" })';
-                }
-                this.disabled = false;
-            });
-            </text>
+        // Extract anti-forgery token
+        const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+        let antiForgeryToken = '';
+
+        if (tokenElement) {
+            antiForgeryToken = tokenElement.value;
+        } else {
+            // Fallback: extract from inline token if exists
+            const tokenMatch = '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/);
+            if (tokenMatch) {
+                antiForgeryToken = tokenMatch[1];
+            }
         }
+
+        // Initialize like system
+        const isAuthenticated = @Json.Serialize(isAuth);
+        initializeLikeSystem(isAuthenticated, antiForgeryToken);
     </script>
 }

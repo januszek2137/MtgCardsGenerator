@@ -1,4 +1,4 @@
-﻿@model List<AiMagicCardsGenerator.Models.Entities.Card>
+@model List<AiMagicCardsGenerator.Models.Entities.Card>
 
 @{
     ViewData["Title"] = "Browse Cards";
@@ -9,210 +9,18 @@
     public static string RenderManaCost(string? manaCost)
     {
         if (string.IsNullOrEmpty(manaCost)) return "-";
-        
+
         var result = System.Text.RegularExpressions.Regex.Replace(
             manaCost,
             @"\{([^}]+)\}",
             match => $"<img src=\"/assets/symbols/{match.Groups[1].Value}.svg\" class=\"mana-symbol\" alt=\"{match.Groups[1].Value}\" />"
         );
-        
+
         return result;
     }
 }
 
 <style>
-    .page-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-    
-    .page-title {
-        font-size: 2.5rem;
-        font-weight: bold;
-        background: linear-gradient(90deg, #D4AF37, #F4CF47, #D4AF37);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .page-subtitle {
-        color: #888;
-        font-size: 1.1rem;
-    }
-    
-    .cards-table {
-        background: rgba(0, 0, 0, 0.5) !important;
-        border-radius: 15px;
-        overflow: hidden;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-    }
-    
-    .cards-table table {
-        width: 100%;
-        border-collapse: collapse;
-        background: transparent !important;
-    }
-    
-    .cards-table thead {
-        background: rgba(212, 175, 55, 0.2) !important;
-    }
-    
-    .cards-table th {
-        color: #D4AF37 !important;
-        font-weight: 600;
-        border: none !important;
-        padding: 1rem;
-        text-align: left;
-    }
-    
-    .cards-table td {
-        color: #ddd !important;
-        background: transparent !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-        padding: 0.8rem 1rem;
-        vertical-align: middle;
-    }
-    
-    .cards-table tbody tr {
-        background: transparent !important;
-        transition: background 0.2s ease;
-    }
-    
-    .cards-table tbody tr:hover {
-        background: rgba(212, 175, 55, 0.15) !important;
-    }
-    
-    .card-name-link {
-        color: #D4AF37;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-    
-    .card-name-link:hover {
-        color: #F4CF47;
-        text-decoration: underline;
-    }
-    
-    .mana-cost {
-        font-family: monospace;
-        background: rgba(255, 255, 255, 0.1);
-        padding: 0.2rem 0.5rem;
-        border-radius: 5px;
-        font-size: 0.9rem;
-    }
-    
-    .rarity-common { color: #aaa; }
-    .rarity-uncommon { color: #C0C0C0; }
-    .rarity-rare { color: #D4AF37; }
-    .rarity-mythic { color: #F4631E; }
-    
-    .pagination-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        margin: 2rem 0;
-        flex-wrap: wrap;
-    }
-    
-    .pagination-btn {
-        background: linear-gradient(135deg, #D4AF37, #B8960C);
-        border: none;
-        color: #000;
-        font-weight: bold;
-        padding: 0.6rem 1.5rem;
-        border-radius: 25px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-    
-    .pagination-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        color: #000;
-    }
-    
-    .pagination-btn.disabled {
-        background: #333;
-        color: #666;
-        pointer-events: none;
-    }
-    
-    .pagination-info {
-        color: #888;
-        font-size: 1rem;
-    }
-    
-    .pagination-info strong {
-        color: #D4AF37;
-    }
-    
-    .search-box {
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 10px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .search-input {
-        background: rgba(0, 0, 0, 0.5) !important;
-        border: 1px solid rgba(212, 175, 55, 0.3) !important;
-        color: #fff !important;
-        border-radius: 8px;
-        padding: 0.7rem 1rem;
-    }
-    
-    .search-input:focus {
-        border-color: #D4AF37 !important;
-        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3) !important;
-        background: rgba(0, 0, 0, 0.7) !important;
-        color: #fff !important;
-        outline: none;
-    }
-    
-    .search-input::placeholder {
-        color: #666;
-    }
-    
-    .search-input option {
-        background: #1a1a2e;
-        color: #fff;
-    }
-    
-    .search-btn {
-        background: linear-gradient(135deg, #D4AF37, #B8960C);
-        border: none;
-        color: #000;
-        font-weight: bold;
-        padding: 0.7rem 1.5rem;
-        border-radius: 8px;
-    }
-    
-    .search-btn:hover {
-        background: linear-gradient(135deg, #F4CF47, #D4AF37);
-        color: #000;
-    }
-
-    @@media (max-width: 768px) {
-        .cards-table {
-            font-size: 0.85rem;
-        }
-        
-        .cards-table th, .cards-table td {
-            padding: 0.5rem;
-        }
-        
-        .hide-mobile {
-            display: none;
-        }
-        
-        .page-title {
-            font-size: 1.8rem;
-        }
-    }
-
     .mana-symbol {
         width: 20px;
         height: 20px;
@@ -225,88 +33,139 @@
         align-items: center;
         gap: 2px;
     }
+
+    .rarity-common { color: var(--text-muted); }
+    .rarity-uncommon { color: #C0C0C0; }
+    .rarity-rare { color: var(--gold-primary); }
+    .rarity-mythic { color: #F4631E; }
+
+    @@media (max-width: 768px) {
+        .hide-mobile {
+            display: none;
+        }
+    }
 </style>
 
-<div class="page-header">
-    <h1 class="page-title">📚 Card Database</h1>
-    <p class="page-subtitle">@ViewBag.TotalCount cards in the collection</p>
+<div class="page-header" data-aos="fade-up">
+    <h1 class="section-title">
+        <i class="fas fa-book"></i>
+        Card Database
+    </h1>
+    <p class="hero-subtitle">@ViewBag.TotalCount cards in the collection</p>
 </div>
 
-<div class="search-box">
-    <form method="get" class="row g-3">
-        <div class="col-md-4">
-            <input type="text" name="search" class="form-control search-input" placeholder="Search by name..." value="@ViewBag.Search">
-        </div>
-        <div class="col-md-3">
-            <select name="type" class="form-control search-input">
-                <option value="">All Types</option>
-                <option value="Creature">Creature</option>
-                <option value="Instant">Instant</option>
-                <option value="Sorcery">Sorcery</option>
-                <option value="Enchantment">Enchantment</option>
-                <option value="Artifact">Artifact</option>
-                <option value="Land">Land</option>
-                <option value="Planeswalker">Planeswalker</option>
-            </select>
-        </div>
-        <div class="col-md-3">
-            <select name="rarity" class="form-control search-input">
-                <option value="">All Rarities</option>
-                <option value="common">Common</option>
-                <option value="uncommon">Uncommon</option>
-                <option value="rare">Rare</option>
-                <option value="mythic">Mythic</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn search-btn w-100">🔍 Search</button>
-        </div>
-    </form>
+<div class="card bg-dark-card border-gold mb-4" data-aos="fade-up" >
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <input type="text"
+                       name="search"
+                       class="form-control"
+                       placeholder="Search by name..."
+                       value="@ViewBag.Search">
+            </div>
+            <div class="col-md-3">
+                <select name="type" class="form-select">
+                    <option value="">All Types</option>
+                    <option value="Creature">Creature</option>
+                    <option value="Instant">Instant</option>
+                    <option value="Sorcery">Sorcery</option>
+                    <option value="Enchantment">Enchantment</option>
+                    <option value="Artifact">Artifact</option>
+                    <option value="Land">Land</option>
+                    <option value="Planeswalker">Planeswalker</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select name="rarity" class="form-select">
+                    <option value="">All Rarities</option>
+                    <option value="common">Common</option>
+                    <option value="uncommon">Uncommon</option>
+                    <option value="rare">Rare</option>
+                    <option value="mythic">Mythic</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-action btn-share w-100">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<div class="pagination-container">
-    <a href="/Cards?page=@(ViewBag.Page - 1)" class="pagination-btn @(ViewBag.Page <= 1 ? "disabled" : "")">← Previous</a>
-    <span class="pagination-info">Page <strong>@ViewBag.Page</strong> of <strong>@totalPages</strong></span>
-    <a href="/Cards?page=@(ViewBag.Page + 1)" class="pagination-btn @(ViewBag.Page >= totalPages ? "disabled" : "")">Next →</a>
+<div class="pagination-container" data-aos="fade-up" >
+    <a href="/Cards?page=@(ViewBag.Page - 1)" class="pagination-btn @(ViewBag.Page <= 1 ? "disabled" : "")">
+        <i class="fas fa-chevron-left"></i>
+        Previous
+    </a>
+    <span class="pagination-info">
+        Page <strong>@ViewBag.Page</strong> of <strong>@totalPages</strong>
+    </span>
+    <a href="/Cards?page=@(ViewBag.Page + 1)" class="pagination-btn @(ViewBag.Page >= totalPages ? "disabled" : "")">
+        Next
+        <i class="fas fa-chevron-right"></i>
+    </a>
 </div>
 
-<div class="cards-table">
-    <table>
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th>Mana Cost</th>
-            <th class="hide-mobile">Type</th>
-            <th>P/T</th>
-            <th class="hide-mobile">Rarity</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var card in Model)
-        {
-            var rarityClass = card.Rarity switch
-            {
-                "common"   => "rarity-common",
-                "uncommon" => "rarity-uncommon",
-                "rare"     => "rarity-rare",
-                "mythic"   => "rarity-mythic",
-                _          => ""
-            };
-                
+<div class="card bg-dark-card border-gold" data-aos="fade-up" >
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
             <tr>
-                <td><a href="/Cards/Details/@card.Id" class="card-name-link">@card.Name</a></td>
-                <td><span class="mana-cost">@Html.Raw(RenderManaCost(card.ManaCost))</span></td>
-                <td class="hide-mobile">@card.TypeLine</td>
-                <td>@(card.Power != null ? card.Power + "/" + card.Toughness : "-")</td>
-                <td class="hide-mobile"><span class="@rarityClass">@card.Rarity</span></td>
+                <th>Name</th>
+                <th>Mana Cost</th>
+                <th class="hide-mobile">Type</th>
+                <th>P/T</th>
+                <th class="hide-mobile">Rarity</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var card in Model)
+            {
+                var rarityClass = card.Rarity switch
+                {
+                    "common"   => "rarity-common",
+                    "uncommon" => "rarity-uncommon",
+                    "rare"     => "rarity-rare",
+                    "mythic"   => "rarity-mythic",
+                    _          => ""
+                };
+
+                <tr>
+                    <td>
+                        <a href="/Cards/Details/@card.Id" class="text-gold text-decoration-none">
+                            @card.Name
+                        </a>
+                    </td>
+                    <td>
+                        <span class="mana-cost">@Html.Raw(RenderManaCost(card.ManaCost))</span>
+                    </td>
+                    <td class="hide-mobile text-muted-custom">@card.TypeLine</td>
+                    <td class="text-gold">@(card.Power != null ? card.Power + "/" + card.Toughness : "-")</td>
+                    <td class="hide-mobile">
+                        <span class="@rarityClass fw-semibold">
+                            @(string.IsNullOrEmpty(card.Rarity) ? "-" : char.ToUpper(card.Rarity[0]) + card.Rarity.Substring(1))
+                        </span>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<div class="pagination-container">
-    <a href="/Cards?page=@(ViewBag.Page - 1)" class="pagination-btn @(ViewBag.Page <= 1 ? "disabled" : "")">← Previous</a>
-    <span class="pagination-info">Page <strong>@ViewBag.Page</strong> of <strong>@totalPages</strong></span>
-    <a href="/Cards?page=@(ViewBag.Page + 1)" class="pagination-btn @(ViewBag.Page >= totalPages ? "disabled" : "")">Next →</a>
+<div class="pagination-container" data-aos="fade-up">
+    <a href="/Cards?page=@(ViewBag.Page - 1)" class="pagination-btn @(ViewBag.Page <= 1 ? "disabled" : "")">
+        <i class="fas fa-chevron-left"></i>
+        Previous
+    </a>
+    <span class="pagination-info">
+        Page <strong>@ViewBag.Page</strong> of <strong>@totalPages</strong>
+    </span>
+    <a href="/Cards?page=@(ViewBag.Page + 1)" class="pagination-btn @(ViewBag.Page >= totalPages ? "disabled" : "")">
+        Next
+        <i class="fas fa-chevron-right"></i>
+    </a>
 </div>

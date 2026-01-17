@@ -4,64 +4,30 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - MTG Card Generator</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <style>
-        html {
-            height: 100%;
-        }
 
-        body {
-            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #4a1942 100%);
-            background-attachment: fixed;
-            min-height: 100%;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .content-wrapper {
-            flex: 1;
-        }
-        
-        .navbar {
-            background: rgba(0, 0, 0, 0.8) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #D4AF37 !important;
-        }
-        
-        .navbar-brand {
-            color: #D4AF37 !important;
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        
-        .nav-link {
-            color: #ccc !important;
-            transition: color 0.3s ease;
-        }
-        
-        .nav-link:hover {
-            color: #D4AF37 !important;
-        }
-        
-        footer {
-            background: rgba(0, 0, 0, 0.5);
-            border-top: 1px solid #D4AF37 !important;
-            color: #888;
-        }
-        
-        footer a {
-            color: #D4AF37;
-        }
-    </style>
+    <!-- Preconnect to external CDNs for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/design-system.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/animations.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/components.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark mb-4">
         <div class="container">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                ⚔️ MTG Card Generator
+                <i class="fas fa-wand-magic-sparkles"></i>
+                <span class="brand-text">MTG Card Generator</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -69,32 +35,46 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Generator" asp-action="Index">Generator</a>
+                        <a class="nav-link" asp-controller="Generator" asp-action="Index">
+                            <i class="fas fa-wand-magic-sparkles"></i> Generator
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Cards" asp-action="Index">Browse Cards</a>
+                        <a class="nav-link" asp-controller="Cards" asp-action="Index">
+                            <i class="fas fa-book"></i> Browse Cards
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Data" asp-action="Index">Import Data</a>
+                        <a class="nav-link" asp-controller="Data" asp-action="Index">
+                            <i class="fas fa-download"></i> Import Data
+                        </a>
                     </li>
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">@User.Identity.Name</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                <i class="fas fa-user"></i> @User.Identity.Name
+                            </a>
                         </li>
                         <li class="nav-item">
                             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" class="d-inline">
-                                <button type="submit" class="nav-link btn btn-link" style="border: none;">Logout</button>
+                                <button type="submit" class="nav-link btn btn-link" style="border: none;">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
                             </form>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
                         </li>
                     }
                 </ul>
@@ -111,14 +91,40 @@
     </div>
 </div>
 
-<footer class="py-4">
-    <div class="container text-center">
-        &copy; 2025 MTG Card Generator - Powered by AI
+<footer class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                <p class="footer-text mb-2">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    MTG Card Generator - Powered by AI
+                </p>
+                <p class="footer-subtext">
+                    Creating unique Magic: The Gathering cards since 2025
+                </p>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+                <div class="footer-links">
+                    <a href="https://github.com/januszek2137" class="footer-link" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="mailto:jan.ozga422@gmail.com" class="footer-link" aria-label="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+                <p class="footer-subtext mt-3">
+                    &copy; 2026 All rights reserved
+                </p>
+            </div>
+        </div>
     </div>
 </footer>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="~/js/animations.js" asp-append-version="true"></script>
+<script src="~/js/components/navbar.js" asp-append-version="true"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
