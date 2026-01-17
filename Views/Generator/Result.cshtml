@@ -13,20 +13,41 @@
         flex-direction: column;
         align-items: center;
         padding: 2rem 0;
+        max-width: 600px;
+        margin: 0 auto;
     }
 
     .card-title {
-        font-size: 2rem;
-        color: #D4AF37;
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: var(--gradient-gold-shimmer);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 2rem;
         text-align: center;
+        animation: shimmer 3s linear infinite;
+    }
+
+    .card-title .fas,
+    .card-title .fa-solid {
+        -webkit-text-fill-color: currentColor;
+        background: none;
+        color: var(--gold-primary);
+        margin-right: 0.5rem;
     }
 
     .card-image {
         max-width: 400px;
         width: 100%;
-        border-radius: 18px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(212, 175, 55, 0.2);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg), var(--shadow-gold-lg);
+        transition: transform var(--transition-base);
+    }
+
+    .card-image:hover {
+        transform: scale(1.02);
     }
 
     .card-actions {
@@ -37,86 +58,89 @@
         justify-content: center;
     }
 
-    .btn-action {
-        padding: 0.8rem 1.5rem;
-        border-radius: 25px;
-        font-weight: bold;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-share {
-        background: linear-gradient(135deg, #4CAF50, #2E7D32);
-        color: #fff;
-    }
-
-    .btn-share:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
-        color: #fff;
-    }
-
-    .btn-download {
-        background: linear-gradient(135deg, #2196F3, #1565C0);
-        color: #fff;
-    }
-
-    .btn-download:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
-        color: #fff;
-    }
-
-    .btn-generate {
-        background: linear-gradient(135deg, #D4AF37, #B8960C);
-        color: #000;
-    }
-
-    .btn-generate:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
-        color: #000;
-    }
-
     .shared-badge {
-        background: #4CAF50;
-        color: #fff;
-        padding: 0.3rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        background: var(--success);
+        color: var(--text-primary);
+        padding: 0.5rem 1.25rem;
+        border-radius: var(--radius-full);
+        font-size: 0.95rem;
+        font-weight: 600;
         margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    }
+
+    @@media (max-width: 768px) {
+        .card-title {
+            font-size: 1.8rem;
+        }
+
+        .card-image {
+            max-width: 100%;
+        }
+
+        .card-actions {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
     }
 </style>
 
 <div class="result-container">
-    <h1 class="card-title">✨ @Model.Name</h1>
+    <h1 class="card-title" data-aos="fade-up">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        @Model.Name
+    </h1>
 
-    <img src="@Url.Action("Image", new { id = Model.Id })" alt="@Model.Name" class="card-image" />
+    <img src="@Url.Action("Image", new { id = Model.Id })"
+         alt="@Model.Name"
+         class="card-image"
+         data-aos="zoom-in"
+          />
 
     @if (Model.IsShared && isOwner)
     {
-        <div class="shared-badge">✅ Shared to Gallery</div>
+        <div class="shared-badge" data-aos="fade-up" >
+            <i class="fas fa-check-circle"></i>
+            Shared to Gallery
+        </div>
     }
 
-    <div class="card-actions">
+    <div class="card-actions" data-aos="fade-up" >
         @if (isOwner)
         {
             @if (!Model.IsShared)
             {
                 <form asp-action="Share" method="post" style="display: inline;">
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn-action btn-share">📤 Share to Gallery</button>
+                    <button type="submit" class="btn-action btn-share">
+                        <i class="fas fa-share-nodes"></i>
+                        Share to Gallery
+                    </button>
                 </form>
             }
 
-            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
-            <a href="@Url.Action("Index")" class="btn-action btn-generate">🎴 Generate Another</a>
+            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">
+                <i class="fas fa-download"></i>
+                Download
+            </a>
+            <a href="@Url.Action("Index")" class="btn-action btn-generate">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Generate Another
+            </a>
         }
         else
         {
-            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">💾 Download</a>
+            <a href="@Url.Action("Download", new { id = Model.Id })" class="btn-action btn-download">
+                <i class="fas fa-download"></i>
+                Download
+            </a>
         }
     </div>
 </div>
