@@ -23,4 +23,9 @@
         <PackageReference Include="Svg" Version="3.4.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\Register.cshtml" />
+    </ItemGroup>
+
 </Project>

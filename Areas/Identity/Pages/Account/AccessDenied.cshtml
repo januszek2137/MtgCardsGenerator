@@ -1,0 +1,16 @@
+﻿@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "Access denied";
+}
+
+<div class="identity-container">
+    <section>
+        <h1 style="color: var(--danger);">
+            <i class="fas fa-lock"></i>
+            @ViewData["Title"]
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.1rem;">You do not have access to this resource.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Return to Home</a>
+    </section>
+</div>

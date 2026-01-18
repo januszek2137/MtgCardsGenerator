@@ -1,0 +1,674 @@
+
+.mtg-card,
+.shared-card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.mtg-card::before,
+.shared-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--gradient-gold);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  z-index: 0;
+  border-radius: var(--radius-lg);
+}
+
+.mtg-card:hover,
+.shared-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold-primary);
+  box-shadow: var(--shadow-gold-lg), 0 0 40px rgba(212, 175, 55, 0.3);
+}
+
+.mtg-card:hover::before,
+.shared-card:hover::before {
+  opacity: 0.1;
+}
+
+.mtg-card-link,
+.shared-card-link {
+  text-decoration: none;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.mtg-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 5/7;
+  overflow: hidden;
+}
+
+.mtg-card-image,
+.shared-card-image {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 5/7;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition-slow);
+}
+
+.mtg-card:hover .mtg-card-image,
+.shared-card:hover .shared-card-image {
+  transform: scale(1.1);
+}
+
+.mtg-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+}
+
+.mtg-card:hover .mtg-card-overlay {
+  opacity: 1;
+}
+
+.mtg-card-overlay .fas,
+.mtg-card-overlay .fa-solid {
+  color: var(--gold-primary);
+  font-size: 2.5rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.mtg-card-content,
+.shared-card-info {
+  padding: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.mtg-card-name,
+.shared-card-name {
+  color: var(--gold-primary);
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition-base);
+}
+
+.mtg-card:hover .mtg-card-name,
+.shared-card:hover .shared-card-name {
+  color: var(--gold-light);
+}
+
+.mtg-card-type,
+.shared-card-type {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mtg-card-footer,
+.shared-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mtg-card-date,
+.shared-card-date {
+  color: var(--text-muted);
+  font-size: 0.813rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.like-btn,
+.like-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.like-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.like-btn:hover {
+  background: var(--gold-muted);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  transform: scale(1.05);
+}
+
+.like-btn.liked {
+  background: var(--gold-muted);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+}
+
+.like-btn.liked .fa-heart {
+  color: var(--danger);
+}
+
+.like-display {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.like-count {
+  font-weight: 600;
+  min-width: 1.25rem;
+  text-align: center;
+}
+
+.cta-btn {
+  background: var(--gradient-gold);
+  border: none;
+  color: var(--bg-primary);
+  font-weight: 700;
+  font-size: 1.2rem;
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-gold);
+  cursor: pointer;
+}
+
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.cta-btn:hover::before {
+  left: 100%;
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold-lg);
+  color: var(--bg-primary);
+  text-decoration: none;
+}
+
+.cta-btn:active {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-gold);
+}
+
+.btn-action {
+  background: var(--gradient-gold);
+  border: 2px solid var(--gold-primary);
+  color: var(--bg-primary);
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-gold);
+  line-height: 1;
+  height: 48px;
+  min-width: 180px;
+}
+
+.btn-action:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-gold-lg);
+  color: var(--bg-primary);
+  text-decoration: none;
+  border-color: var(--gold-light);
+}
+
+.btn-action:active {
+  transform: translateY(-1px);
+}
+
+.btn-share {
+  background: var(--gradient-gold);
+  border-color: var(--gold-primary);
+}
+
+.btn-download {
+  background: linear-gradient(135deg, var(--info) 0%, var(--info-hover) 100%);
+  border-color: var(--info);
+}
+
+.btn-download:hover {
+  border-color: var(--info);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4);
+}
+
+.btn-generate {
+  background: linear-gradient(135deg, var(--success) 0%, var(--success-hover) 100%);
+  border-color: var(--success);
+}
+
+.btn-generate:hover {
+  border-color: var(--success);
+  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.4);
+}
+
+.pagination-btn {
+  background: var(--gradient-gold);
+  border: none;
+  color: var(--bg-primary);
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+  color: var(--bg-primary);
+  text-decoration: none;
+}
+
+.pagination-btn.disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-muted);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.hero-section {
+  text-align: center;
+  padding: 5rem 0 4rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  background: var(--gradient-gold-shimmer);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1.5rem;
+  animation: shimmer 3s linear infinite;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title .fas,
+.hero-title .fa-solid {
+  -webkit-text-fill-color: currentColor;
+  background: none;
+  color: var(--gold-primary);
+  margin-right: 0.5rem;
+}
+
+.hero-subtitle {
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  margin-bottom: 2.5rem;
+  font-weight: 400;
+  position: relative;
+  z-index: 1;
+}
+
+.section-title {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--gold-primary);
+  margin: 3rem 0 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.section-title .fas,
+.section-title .fa-solid {
+  font-size: 0.9em;
+  color: var(--gold-light);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin: 2rem 0;
+}
+
+.empty-state-icon {
+  font-size: 4rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 3rem 0 2rem;
+  }
+
+  .hero-section::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+.progress-container {
+  display: none;
+  max-width: 600px;
+  margin: 3rem auto 0;
+  text-align: center;
+}
+
+.progress-container.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+.progress-bar-wrapper {
+  position: relative;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-emphasis);
+  border-radius: var(--radius-full);
+  height: 32px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--gold-primary);
+  border-radius: inherit;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+  position: relative;
+}
+
+.progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: transparent;
+}
+
+.progress-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  display: none; /* Hide percentage display */
+}
+
+.progress-status {
+  margin-top: 1.25rem;
+  color: var(--gold-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.progress-status .spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-top-color: var(--gold-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2.5rem;
+  padding: 0 1rem;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.4;
+  transition: all var(--transition-base);
+  flex: 0 0 auto;
+}
+
+.progress-step.active {
+  opacity: 1;
+}
+
+.progress-step.active .step-icon-circle {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.4);
+}
+
+.progress-step.completed {
+  opacity: 1;
+}
+
+.progress-step.completed .step-icon-circle {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.step-icon-circle {
+  width: 56px;
+  height: 56px;
+  background: var(--bg-tertiary);
+  border: 2px solid var(--border-subtle);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.step-icon-circle .fas,
+.step-icon-circle .far,
+.step-icon-circle .fa-solid,
+.step-icon-circle .fa-regular {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  transition: color var(--transition-base);
+}
+
+.progress-step.active .step-icon-circle .fas,
+.progress-step.active .step-icon-circle .fa-solid,
+.progress-step.completed .step-icon-circle .fas,
+.progress-step.completed .step-icon-circle .fa-solid {
+  color: var(--bg-primary);
+}
+
+.step-icon {
+  font-size: 1.5rem;
+}
+
+.step-label {
+  font-size: 0.813rem;
+  color: var(--text-muted);
+  text-align: center;
+  transition: color var(--transition-base);
+  max-width: 80px;
+}
+
+.progress-step.active .step-label {
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.progress-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--border-subtle);
+  margin: 0 0.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-step.completed + .progress-step-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: var(--gold-primary);
+  animation: lineProgress 0.5s ease forwards;
+}
+
+@media (max-width: 768px) {
+  .progress-steps {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .progress-step-line {
+    display: none;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    max-width: 60px;
+  }
+
+  .step-icon-circle {
+    width: 48px;
+    height: 48px;
+  }
+
+  .step-icon-circle .fas,
+  .step-icon-circle .fa-solid {
+    font-size: 1.25rem;
+  }
+
+  .step-icon {
+    font-size: 1.25rem;
+  }
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 4rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  text-align: center;
+  transition: all var(--transition-base);
+}
+
+.feature-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--border-emphasis);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--gold-primary);
+}
+
+.feature-title {
+  color: var(--gold-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.feature-desc {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

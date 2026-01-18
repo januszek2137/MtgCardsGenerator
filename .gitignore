@@ -411,3 +411,9 @@ FodyWeavers.xsd
 CLAUDE.md
 appsettings.Development.json
 appsettings.Production.json
+
+# EF Core compiled models (auto-generated)
+Data/CompiledModels/
+
+# Temp files
+nul

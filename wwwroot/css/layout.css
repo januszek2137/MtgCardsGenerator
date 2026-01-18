@@ -1,0 +1,229 @@
+
+@supports not (backdrop-filter: blur(16px)) {
+  .navbar {
+    background: rgba(0, 0, 0, 0.9) !important;
+  }
+}
+
+.navbar-brand {
+  color: var(--gold-primary) !important;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-base);
+}
+
+.navbar-brand:hover {
+  color: var(--gold-light) !important;
+  transform: translateY(-2px);
+}
+
+.navbar-brand .fas,
+.navbar-brand .fa-solid {
+  color: var(--gold-light);
+  font-size: 1.3rem;
+}
+
+.brand-text {
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.navbar.navbar-scrolled {
+  box-shadow: var(--shadow-lg);
+  border-bottom-color: var(--gold-primary);
+  background: rgba(10, 10, 18, 0.95) !important;
+  backdrop-filter: blur(16px);
+}
+
+.nav-link {
+  color: var(--text-secondary) !important;
+  transition: all var(--transition-base);
+  position: relative;
+  padding: 0.5rem 1rem !important;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--gradient-gold);
+  transform: translateX(-50%);
+  transition: width var(--transition-base);
+}
+
+.nav-link:hover {
+  color: var(--gold-primary) !important;
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+.nav-link.active {
+  color: var(--gold-primary) !important;
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  width: 80%;
+}
+
+.nav-link .fas,
+.nav-link .far,
+.nav-link .fa-solid,
+.nav-link .fa-regular {
+  font-size: 0.9rem;
+}
+
+footer {
+  background: var(--bg-overlay);
+  border-top: 2px solid var(--border-emphasis);
+  color: var(--text-muted);
+  position: relative;
+  margin-top: auto;
+}
+
+.footer-text {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.footer-text .fas,
+.footer-text .fa-solid {
+  color: var(--gold-primary);
+  margin-right: 0.5rem;
+}
+
+.footer-subtext {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all var(--transition-base);
+}
+
+.footer-link:hover {
+  background: var(--gold-muted);
+  border-color: var(--gold-primary);
+  color: var(--gold-primary);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.footer-link:active {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 992px) {
+  .navbar-collapse {
+    margin-top: 1rem;
+    background: rgba(20, 20, 31, 0.95);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+  }
+
+  .nav-link {
+    padding: 0.75rem 1rem !important;
+    border-radius: var(--radius-sm);
+  }
+
+  .nav-link:hover {
+    background: var(--gold-muted);
+  }
+
+  .nav-link::after {
+    display: none;
+  }
+
+  .navbar-nav {
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+
+  .brand-text {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .footer-links {
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  footer .row {
+    text-align: center !important;
+  }
+
+  footer .col-md-6 {
+    text-align: center !important;
+  }
+}
+
+.navbar-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+@media (max-width: 576px) {
+  footer {
+    padding: 2rem 1rem !important;
+  }
+
+  .footer-text {
+    font-size: 1rem;
+  }
+
+  .footer-links {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .footer-link {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+}
+
