@@ -7,6 +7,8 @@
     var isAuth    = User.Identity.IsAuthenticated;
 }
 
+@Html.AntiForgeryToken()
+
 <div class="hero-section">
     <h1 class="hero-title" data-aos="fade-up" data-aos-delay="0">
         <i class="fas fa-wand-magic-sparkles"></i>
@@ -126,22 +128,12 @@ else
 @section Scripts {
     <script src="~/js/components/card-likes.js" asp-append-version="true"></script>
     <script>
-        // Extract anti-forgery token
         const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-        let antiForgeryToken = '';
-
-        if (tokenElement) {
-            antiForgeryToken = tokenElement.value;
-        } else {
-            // Fallback: extract from inline token if exists
-            const tokenMatch = '@Html.AntiForgeryToken()'.match(/value="([^"]+)"/);
-            if (tokenMatch) {
-                antiForgeryToken = tokenMatch[1];
-            }
-        }
-
-        // Initialize like system
+        const antiForgeryToken = tokenElement ? tokenElement.value : '';
         const isAuthenticated = @Json.Serialize(isAuth);
-        initializeLikeSystem(isAuthenticated, antiForgeryToken);
+
+        if (isAuthenticated && antiForgeryToken) {
+            initializeLikeSystem(isAuthenticated, antiForgeryToken);
+        }
     </script>
 }

@@ -27,7 +27,7 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var recentCards = await _generatedCardRepository.GetSharedAsync(12);
-        var topCards = await _generatedCardRepository.GetTopLikedAsync(6);
+        var topCards = await _generatedCardRepository.GetTopLikedAsync(8);
 
         ViewBag.TopCards = topCards;
 
