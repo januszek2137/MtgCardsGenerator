@@ -29,9 +29,9 @@ public class GeneratorController : Controller {
 
     [HttpPost]
     [EnableRateLimiting("GeneratorLimit")]
-    public async Task<IActionResult> Generate()
+    public async Task<IActionResult> Generate(int cardCmc)
     {
-        var result = await _generatorService.GenerateRandomCardAsync();
+        var result = await _generatorService.GenerateCardWithConvertedManaCostAsync(cardCmc);
         var imageBytes = await _cardRenderService.RenderCardAsync(result.Card);
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
