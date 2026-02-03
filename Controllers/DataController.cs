@@ -1,8 +1,10 @@
 ﻿using AiMagicCardsGenerator.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AiMagicCardsGenerator.Controllers;
 
+[Authorize(Roles = "Admin")]
 public class DataController : Controller {
     private readonly ICardService     _cardService;
     private readonly IScryfallService _scryfallService;

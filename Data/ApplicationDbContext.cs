@@ -1,10 +1,12 @@
 ﻿using AiMagicCardsGenerator.Models.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace AiMagicCardsGenerator.Data;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+    : IdentityDbContext<IdentityUser, IdentityRole, string>(options)
 {
     public DbSet<Card>          Cards          => Set<Card>();
     public DbSet<GeneratedCard> GeneratedCards => Set<GeneratedCard>();
