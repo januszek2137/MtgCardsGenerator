@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using AiMagicCardsGenerator.Data;
-using AiMagicCardsGenerator.Models;
 using AiMagicCardsGenerator.Repositories;
 using AiMagicCardsGenerator.Services;
-using AiMagicCardsGenerator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,13 +29,39 @@ builder.Services.AddHttpClient<IImageGeneratorService, ImageGeneratorService>(cl
     client.Timeout = TimeSpan.FromSeconds(60); // 60 seconds for image generation
 });
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddRateLimiter();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope()) {
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    
+    if(!await roleManager.RoleExistsAsync("Admin"))
+        await roleManager.CreateAsync(new IdentityRole("Admin"));
+    
+    if(!await roleManager.RoleExistsAsync("User"))
+        await roleManager.CreateAsync(new IdentityRole("User"));
+
+    foreach (var user in userManager.Users.ToList()) {
+        if(!await userManager.IsInRoleAsync(user, "User"))
+            await userManager.AddToRoleAsync(user, "User");
+    }
+
+    var adminEmail = string.IsNullOrEmpty(builder.Configuration["AdminEmail"])
+        ? null
+        : await userManager.FindByEmailAsync(builder.Configuration["AdminEmail"]);
+    
+    if(adminEmail!=null && !await userManager.IsInRoleAsync(adminEmail, "Admin"))
+        await userManager.AddToRoleAsync(adminEmail, "Admin");
+}
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {

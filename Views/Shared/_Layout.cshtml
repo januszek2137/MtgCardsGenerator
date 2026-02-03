@@ -45,11 +45,13 @@
                             <i class="fas fa-book"></i> Browse Cards
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Data" asp-action="Index">
-                            <i class="fas fa-download"></i> Import Data
-                        </a>
-                    </li>
+                    @if (User.IsInRole("Admin")) {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Data" asp-action="Index">
+                                <i class="fas fa-download"></i> Import Data
+                            </a>
+                        </li>
+                    }
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
