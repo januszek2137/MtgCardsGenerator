@@ -16,6 +16,20 @@ public class GeneratorService : IGeneratorService {
         _configuration  = configuration;
     }
 
+    public async Task<CardGenerationResult> GenerateCardWithConvertedManaCostAsync(int targetCmc) {
+        var examples = await _cardRepository.GetRandomByCmcAsync(targetCmc, 5);
+        var prompt   = BuildPrompt(examples, targetCmc);
+        var response = await CallGroqAsync(prompt);
+        var card     = ParseResponse(response);
+
+        return new CardGenerationResult
+        {
+            Card    = card,
+            BasedOn = examples
+        };
+    }
+    
+    
     public async Task<CardGenerationResult> GenerateRandomCardAsync()
     {
         var random    = new Random();

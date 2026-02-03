@@ -3,6 +3,7 @@
 namespace AiMagicCardsGenerator.Services;
 
 public interface IGeneratorService {
+    Task<CardGenerationResult> GenerateCardWithConvertedManaCostAsync(int targetCmc);
     Task<CardGenerationResult> GenerateRandomCardAsync();
 }
 

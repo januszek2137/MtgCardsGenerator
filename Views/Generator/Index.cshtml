@@ -11,7 +11,22 @@
         Create unique Magic: The Gathering cards powered by artificial intelligence
     </p>
 
-    <form asp-action="Generate" method="post" id="generateForm" data-aos="fade-up" >
+    <form asp-action="Generate" method="post" id="generateForm" data-aos="fade-up">
+        <div class="slider-wrapper">
+            <label for="powerRange" class="form-label">
+                <i class="fas fa-bolt"></i>
+                Converted Mana Cost:
+                <span id="rangeValue">5</span>
+            </label>
+            <input type="range"
+                   class="form-range"
+                   name="cardCmc"
+                   id="powerRange"
+                   min="0"
+                   max="15"
+                   value="5"
+                   oninput="document.getElementById('rangeValue').innerText = this.value">
+        </div>
         <button type="submit" class="cta-btn" id="generateBtn">
             <i class="fas fa-wand-magic-sparkles"></i>
             Generate Random Card
